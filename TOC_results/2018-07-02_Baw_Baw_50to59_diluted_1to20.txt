@@ -1,0 +1,23 @@
+[Header]	
+System	TOC-L	
+S/W Version	1.00	
+User		
+Date/Time	5/07/2018 11:21:58 AM	
+
+[System]	
+Instrument Options	TOC/ASI/IC Unit/TN/Sparge Kit/	
+
+[Data]	
+Type	Anal.	Sample Name	Sample ID	Result(TOC)	Result(TC)	Result(IC)	Result(POC)	Result(NPOC)	Result(TN)	Unit	Vial	Date / Time	
+Standard	TC	Untitled	Untitled		100.0					mg/L	1, 1, 1, 1	2/07/2018 4:05:49 PM	
+Standard	IC	Untitled	Untitled			100.0				ppm	2, 2, 2, 2	2/07/2018 4:47:07 PM	
+Unknown	TOC	Untitled	50	25.47	25.92	0.4502				mg/L	3	2/07/2018 5:08:08 PM	
+Unknown	TOC	Untitled	51	27.22	27.67	0.4528				mg/L	4	2/07/2018 5:26:38 PM	
+Unknown	TOC	Untitled	52	59.19	59.48	0.2950				mg/L	5	2/07/2018 5:45:13 PM	
+Unknown	TOC	Untitled	53	29.30	29.53	0.2264				mg/L	6	2/07/2018 6:03:40 PM	
+Unknown	TOC	Untitled	54	50.03	50.40	0.3693				mg/L	7	2/07/2018 6:22:36 PM	
+Unknown	TOC	Untitled	55	25.60	25.85	0.2514				mg/L	8	2/07/2018 6:40:42 PM	
+Unknown	TOC	Untitled	56	18.17	18.82	0.6581				mg/L	9	2/07/2018 7:03:07 PM	
+Unknown	TOC	Untitled	57	12.01	12.47	0.4613				mg/L	10	2/07/2018 7:21:36 PM	
+Unknown	TOC	Untitled	58	35.61	36.20	0.5912				mg/L	11	2/07/2018 7:43:19 PM	
+Unknown	TOC	Untitled	59	27.35	27.81	0.4659				mg/L	12	2/07/2018 8:04:40 PM	
