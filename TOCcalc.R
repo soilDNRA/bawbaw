@@ -33,7 +33,12 @@ library(readxl)
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
                                                        skip = 14) #read KCl data
 
+# N.B.!! first need to convert <0.2 to 0
 
+bawbaw_mineral_N <- bawbaw_mineral_N %>%
+  select(sample, `N-Nitrate (mg/L)`) %>%
+  group_by(sample) # %>% 
+#  summarise(avg_nitrate = mean(`N-Nitrate (mg/L)`))
 
 
 
