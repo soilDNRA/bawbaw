@@ -17,10 +17,18 @@ rename(bawbaw_TOC, sample_name = X3, sample_ID = X4, TOC_mg_per_l = X5)
 
 bawbaw_TOC$X3 <- gsub("_HWC_diluted1to20", "", bawbaw_TOC$X3) # remove "_HWC_diluted1to20" from sample names
 
-bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3)
-bawbaw_TOC %>% 
+bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3) # remove "_SP." from sample names to just give elevation.
+
+bawbaw_TOC_means <- bawbaw_TOC %>% 
   group_by(elevation) %>% 
-  summarise(avg_TOC = mean(X5),
-            total = n())
+  summarise(avg_TOC = mean(X5))
+
+library(readxl)
+bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
+                                                       skip = 14) #read KCl data
+
+
+
+
 
 # arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
