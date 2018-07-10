@@ -16,3 +16,11 @@ bawbaw_TOC <- bawbaw_TOC_50to97 %>%
 rename(bawbaw_TOC, sample_name = X3, sample_ID = X4, TOC_mg_per_l = X5)
 
 bawbaw_TOC$X3 <- gsub("_HWC_diluted1to20", "", bawbaw_TOC$X3) # remove "_HWC_diluted1to20" from sample names
+
+bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3)
+bawbaw_TOC %>% 
+  group_by(elevation) %>% 
+  summarise(avg_TOC = mean(X5),
+            total = n())
+
+# arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
