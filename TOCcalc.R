@@ -2,7 +2,11 @@ library(readr)
 library(tidyverse)
 
 
+
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
+newnames <- scan("50to59_sample_names", character(), quote = "") #replace "untitled" with sample names in 50to59
+bawbaw_TOC_50to59$X3 <- newnames
+
 bawbaw_TOC_60to97 <- read_table2(col_names = FALSE, "TOC_results/2018-07-04_Baw_Baw_60to97_diluted_1to20.txt", skip = 13)
 bawbaw_TOC_50to97 <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97)
 bawbaw_TOC <- bawbaw_TOC_50to97 %>% 
