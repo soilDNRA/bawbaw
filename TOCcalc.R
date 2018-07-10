@@ -23,6 +23,12 @@ bawbaw_TOC_means <- bawbaw_TOC %>%
   group_by(elevation) %>% 
   summarise(avg_TOC = mean(X5))
 
+#calculate HWC micrograms C per gram of soil.
+bawbaw_TOC_means %>% 
+  mutate(avg_mg_TOC_per_30ml = avg_TOC * 0.030) %>%
+  mutate(avg_ug_TOC_per_30ml = avg_mg_TOC_per_30ml * 1000 ) %>% 
+  mutate(avg_ug_TOC_per_g_soil = avg_ug_TOC_per_30ml / 3)
+
 library(readxl)
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
                                                        skip = 14) #read KCl data
