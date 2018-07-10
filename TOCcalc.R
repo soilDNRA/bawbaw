@@ -24,7 +24,7 @@ bawbaw_TOC_means <- bawbaw_TOC %>%
   summarise(avg_TOC = mean(X5))
 
 #calculate HWC micrograms C per gram of soil.
-bawbaw_TOC_means %>% 
+bawbaw_TOC_means <- bawbaw_TOC_means %>% 
   mutate(avg_mg_TOC_per_30ml = avg_TOC * 0.030) %>%
   mutate(avg_ug_TOC_per_30ml = avg_mg_TOC_per_30ml * 1000 ) %>% 
   mutate(avg_ug_TOC_per_g_soil = avg_ug_TOC_per_30ml / 3)
