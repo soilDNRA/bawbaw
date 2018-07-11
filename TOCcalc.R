@@ -35,16 +35,20 @@ bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls",
 
 bawbaw_mineral_N <- rename(bawbaw_mineral_N, nitrate = `N-Nitrate (mg/L)`) #rename column to make it easier to type!
 bawbaw_mineral_N <- rename(bawbaw_mineral_N, ammonium = `N-Ammonium (mg/L)`) #rename column to make it easier to type!
+
 # N.B.!! first need to convert <0.2 to 0
 
 bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2
 
-
-
 bawbaw_mineral_N <- bawbaw_mineral_N %>%
   select(sample, nitrate, ammonium)
 
-#  summarise(avg_nitrate = mean(`N-Nitrate (mg/L)`))
+bawbaw_mineral_N <- bawbaw_mineral_N %>% filter(sample != "blank") # remove blank samples
+
+bawbaw_mineral_N$elevation <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove "SP." from sample names to just give elevation.
+
+
+averageN <- bawbaw_mineral_N %>% groupbysummarise(avg_nitrate = mean(nitrate))
 
 
 # arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
