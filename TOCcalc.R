@@ -1,6 +1,6 @@
 library(readr)
 library(tidyverse)
-
+library(readxl)
 
 
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
@@ -19,6 +19,11 @@ bawbaw_TOC$X3 <- gsub("_HWC_diluted1to20", "", bawbaw_TOC$X3) # remove "_HWC_dil
 
 bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3) # remove "_SP." from sample names to just give elevation.
 
+# replace "summit" with "1500m"
+bawbaw_TOC <- bawbaw_TOC %>%
+  mutate(elevation=replace(elevation, elevation=="summit", "1500m")) %>%
+  as.data.frame()
+
 bawbaw_TOC_means <- bawbaw_TOC %>% 
   group_by(elevation) %>% 
   summarise(avg_TOC = mean(X5))
@@ -29,7 +34,7 @@ bawbaw_TOC_means <- bawbaw_TOC_means %>%
   mutate(avg_ug_TOC_per_30ml = avg_mg_TOC_per_30ml * 1000 ) %>% 
   mutate(avg_ug_TOC_per_g_soil = avg_ug_TOC_per_30ml / 3)
 
-library(readxl)
+
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
                                                        skip = 14) #read KCl data
 
