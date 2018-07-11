@@ -61,6 +61,13 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N %>%
   group_by(elevation) %>% 
   summarise_at(c("nitrate", "ammonium"), mean)
 
+# replace "summit" with "1500m"
+bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
+  mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
+  as.data.frame()
+
+# add "m" to elevations (so that they match up with TOC data) https://stackoverflow.com/questions/36302300/adding-the-degree-symbol-at-the-end-of-each-vector-element-in-r
+bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
 
 # averageN <- bawbaw_mineral_N %>% groupbysummarise(avg_nitrate = mean(nitrate))
 
