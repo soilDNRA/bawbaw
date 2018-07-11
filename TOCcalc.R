@@ -47,8 +47,12 @@ bawbaw_mineral_N <- bawbaw_mineral_N %>% filter(sample != "blank") # remove blan
 
 bawbaw_mineral_N$elevation <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove "SP." from sample names to just give elevation.
 
+# convert from character to numeric data
+bawbaw_mineral_N$nitrate <- as.numeric(bawbaw_mineral_N$nitrate)
+bawbaw_mineral_N$ammonium <- as.numeric(bawbaw_mineral_N$ammonium)
 
-averageN <- bawbaw_mineral_N %>% groupbysummarise(avg_nitrate = mean(nitrate))
+
+# averageN <- bawbaw_mineral_N %>% groupbysummarise(avg_nitrate = mean(nitrate))
 
 
 # arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
