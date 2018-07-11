@@ -36,12 +36,12 @@ bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls",
 bawbaw_mineral_N <- rename(bawbaw_mineral_N, nitrate = `N-Nitrate (mg/L)`) #rename column to make it easier to type!
 bawbaw_mineral_N <- rename(bawbaw_mineral_N, ammonium = `N-Ammonium (mg/L)`) #rename column to make it easier to type!
 
-# N.B.!! first need to convert <0.2 to 0
+# N.B.!! first need to convert <0.2 to 0.2
 
 bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2
 
 bawbaw_mineral_N <- bawbaw_mineral_N %>%
-  select(sample, nitrate, ammonium)
+  select(sample, nitrate, ammonium) #just keep the necessary data columns
 
 bawbaw_mineral_N <- bawbaw_mineral_N %>% filter(sample != "blank") # remove blank samples
 
@@ -50,6 +50,11 @@ bawbaw_mineral_N$elevation <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove 
 # convert from character to numeric data
 bawbaw_mineral_N$nitrate <- as.numeric(bawbaw_mineral_N$nitrate)
 bawbaw_mineral_N$ammonium <- as.numeric(bawbaw_mineral_N$ammonium)
+
+# calculate means for nitrate and ammonium using dplyr
+bawbaw_mineral_N_means <- bawbaw_mineral_N %>% 
+  group_by(elevation) %>% 
+  summarise_at(c("nitrate", "ammonium"), mean)
 
 
 # averageN <- bawbaw_mineral_N %>% groupbysummarise(avg_nitrate = mean(nitrate))
