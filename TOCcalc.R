@@ -33,13 +33,18 @@ library(readxl)
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
                                                        skip = 14) #read KCl data
 
+bawbaw_mineral_N <- rename(bawbaw_mineral_N, nitrate = `N-Nitrate (mg/L)`) #rename column to make it easier to type!
+bawbaw_mineral_N <- rename(bawbaw_mineral_N, ammonium = `N-Ammonium (mg/L)`) #rename column to make it easier to type!
 # N.B.!! first need to convert <0.2 to 0
 
-bawbaw_mineral_N <- bawbaw_mineral_N %>%
-  select(sample, `N-Nitrate (mg/L)`) %>%
-  group_by(sample) # %>% 
-#  summarise(avg_nitrate = mean(`N-Nitrate (mg/L)`))
+bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2
 
+
+
+bawbaw_mineral_N <- bawbaw_mineral_N %>%
+  select(sample, nitrate, ammonium)
+
+#  summarise(avg_nitrate = mean(`N-Nitrate (mg/L)`))
 
 
 # arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
