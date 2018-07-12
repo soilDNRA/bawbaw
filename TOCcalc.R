@@ -22,9 +22,9 @@ bawbaw_TOC$X3 <- gsub("_HWC_diluted1to20", "", bawbaw_TOC$X3) # remove "_HWC_dil
 
 bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3) # remove "_SP." from sample names to just give elevation.
 
-# replace "summit" with "1500m"
+# replace "summit" with "1500"
 bawbaw_TOC <- bawbaw_TOC %>%
-  mutate(elevation=replace(elevation, elevation=="summit", "1500m")) %>%
+  mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
   as.data.frame()
 
 bawbaw_TOC_means <- bawbaw_TOC %>% 
@@ -70,7 +70,7 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
   as.data.frame()
 
 # add "m" to elevations (so that they match up with TOC data) https://stackoverflow.com/questions/36302300/adding-the-degree-symbol-at-the-end-of-each-vector-element-in-r
-bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
+# bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
 
 # calculate N-nitrate per gram of soil
 bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NO3_in_extract_mg = nitrate * 0.1,
@@ -92,7 +92,7 @@ combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_p
 write_rds(combined_NC_means,"combined_NC_means.rds")
 
 #print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-combined_NC_means2 <- combined_NC_means %>% select(elevation,C_nitrate_ratio,C_mineral_N_ratio)
+combined_NC_means2 <- combined_NC_means %>% select(elevation,C_nitrate_ratio,C_mineral_N_ratio) %>% group_by(elevation)
 combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 2)
 combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 2)
 names(combined_NC_means2) <- c("Elevation", "HWC/nitrate", "HWC/mineral-N")
