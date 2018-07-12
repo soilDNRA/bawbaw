@@ -70,12 +70,13 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
 bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
 
 # calculate N-nitrate per gram of soil
-bawbaw_mineral_N_means <- bawbaw_mineral_N_means%>% mutate(total_NO3_in_extract_mg = nitrate * 0.1,
+bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NO3_in_extract_mg = nitrate * 0.1,
                                                            total_NO3_in_extract_ug = total_NO3_in_extract_mg * 1000,
                                                            total_NO3_per_g_soil_ug = total_NO3_in_extract_ug / 10)
 
-
 # calculate C/NO3- ratio
+
+combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
 
 # bawbaw_C_nitrate_ratio <- 
 
