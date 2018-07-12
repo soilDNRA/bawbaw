@@ -62,7 +62,7 @@ bawbaw_mineral_N$ammonium <- as.numeric(bawbaw_mineral_N$ammonium)
 # calculate means for nitrate and ammonium using dplyr
 bawbaw_mineral_N_means <- bawbaw_mineral_N %>% 
   group_by(elevation) %>% 
-  summarise_at(c("nitrate", "ammonium"), mean)
+  summarise_at(c("nitrate", "ammonium"), mean) 
 
 # replace "summit" with "1500m"
 bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
@@ -92,10 +92,14 @@ combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_p
 write_rds(combined_NC_means,"combined_NC_means.rds")
 
 #print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-combined_NC_means2 <- combined_NC_means %>% select(elevation,C_nitrate_ratio,C_mineral_N_ratio) %>% group_by(elevation)
+combined_NC_means2 <- combined_NC_means
 combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 2)
 combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 2)
-names(combined_NC_means2) <- c("Elevation", "HWC/nitrate", "HWC/mineral-N")
+combined_NC_means2 <- combined_NC_means2 %>%
+  mutate(elevation = factor(elevation, levels = c("200", "300", "500", "600", "800", "900", "1000", "1100","1200", "1300", "1400","1500"))) %>% 
+  arrange(elevation) %>% 
+  select(elevation, C_nitrate_ratio, C_mineral_N_ratio) 
+names(combined_NC_means2) <- c("Elevation", "HWC/nitrate-N", "HWC/mineral-N")
 kable(combined_NC_means2) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
   save_kable(file = "table1.html", self_contained = T)
