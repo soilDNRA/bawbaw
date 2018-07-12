@@ -73,11 +73,17 @@ bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
 bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NO3_in_extract_mg = nitrate * 0.1,
                                                            total_NO3_in_extract_ug = total_NO3_in_extract_mg * 1000,
                                                            total_NO3_per_g_soil_ug = total_NO3_in_extract_ug / 10)
+# calculate ammonium-N per gram of soil
+bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NH4_in_extract_mg = ammonium * 0.1,
+                                                            total_NH4_in_extract_ug = total_NH4_in_extract_mg * 1000,
+                                                            total_NH4_per_g_soil_ug = total_NH4_in_extract_ug / 10)
 
-# calculate C/NO3- ratio
+
+# calculate C/NO3- ratio and C/mineral-N ratio
 
 combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
-combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug)
+combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
+                                                  C_mineral_N_ratio = avg_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
 
 # write .rds file with data
 write_rds(combined_NC_means,"combined_NC_means.rds")
