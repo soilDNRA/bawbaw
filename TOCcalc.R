@@ -79,7 +79,5 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NO3_in_extract
 combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
 combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug)
 
-# bawbaw_C_nitrate_ratio <- 
-
-
-# arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
+# write .rds file with data
+write_rds(combined_NC_means,"combined_NC_means.rds")
