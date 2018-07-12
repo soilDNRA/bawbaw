@@ -3,6 +3,7 @@ library(tidyverse)
 library(readxl)
 library(formattable)
 library(kableExtra)
+library(knitr)
 
 
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
@@ -90,42 +91,12 @@ combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_p
 # write .rds file with data
 write_rds(combined_NC_means,"combined_NC_means.rds")
 
-# ####print
-# combined_NC_means2 <- combined_NC_means
-# combined_NC_means2$C_nitrate_ratio <- accounting(combined_NC_means2$C_nitrate_ratio)
-# combined_NC_means2$C_mineral_N_ratio <- accounting(combined_NC_means2$C_mineral_N_ratio)
-# combined_NC_means2 <- combined_NC_means2 %>% 
-#   select(elevation,C_nitrate_ratio,C_mineral_N_ratio)
-# 
-# # colnames(combined_NC_means2) <- c("Elevation","HWC/NO", "10 g")
-# printme <- formattable(combined_NC_means2)
-# printme
+#print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+combined_NC_means2 <- combined_NC_means %>% select(elevation,C_nitrate_ratio,C_mineral_N_ratio)
+combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 2)
+combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 2)
+names(combined_NC_means2) <- c("Elevation", "HWC/nitrate", "HWC/mineral-N")
+kable(combined_NC_means2) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  save_kable(file = "table1.html", self_contained = T)
 
-# make kable table
-combined_NC_means2 <- combined_NC_means
-combined_NC_means2$C_nitrate_ratio <- accounting(combined_NC_means2$C_nitrate_ratio)
-combined_NC_means2$C_mineral_N_ratio <- accounting(combined_NC_means2$C_mineral_N_ratio)
-combined_NC_means2 <- combined_NC_means2 %>%
-  select(elevation,C_nitrate_ratio,C_mineral_N_ratio)
-
-
-# A <- data.frame(round(replicate(3, runif(2)),2))
-
-names(combined_NC_means2) <- c("Elevation", "NO~3~^-^", "NH~4~^+^")
-# combined_NC_means2_table <- kable(combined_NC_means2)
-
-# tempDir <- tempfile()
-# dir.create(tempDir)
-# htmlFile <- file.path(tempDir, "index.html")
-# # (code to write some content to the file)
-kable_out <- kable(combined_NC_means2, "html")
-readr::write_file(kable_out, "kable_out.html")
-
-
-# view_kable <- function(x, ...){
-#   tab <- paste(capture.output(kable(x, combined_NC_means2)), collapse = '\n')
-#   tf <- tempfile(fileext = ".html")
-#   writeLines(tab, tf)
-#   rstudio::viewer(tf)
-# }
-# view_kable(head(df[,1:9]), format = 'html', table.attr = "class=nofluid")
