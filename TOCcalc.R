@@ -69,9 +69,14 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
 # add "m" to elevations (so that they match up with TOC data) https://stackoverflow.com/questions/36302300/adding-the-degree-symbol-at-the-end-of-each-vector-element-in-r
 bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
 
+# calculate N-nitrate per gram of soil
+ # mg of nitrate in 100 mL KCl extract solution
+babaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_nitrate_in_extract = nitrate * 0.1)
+
+
 # calculate C/NO3- ratio
 
-bawbaw_C_nitrate_ratio <- 
+# bawbaw_C_nitrate_ratio <- 
 
 
 # arranged_TOC <- bawbaw_TOC %>% arrange(elevation) # to view data by elevation
