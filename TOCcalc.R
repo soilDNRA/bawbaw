@@ -17,8 +17,8 @@ bawbaw_TOC_60to97$X3 <- gsub("_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*"
 
 
 bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
-  rename(elevation = X3, sample_ID = X4, TOC_mg_per_l = X5) %>%
-  select(elevation, sample_ID, TOC_mg_per_l) %>%
+  rename(elevation = X3, TOC_mg_per_l = X5) %>%
+  select(elevation, TOC_mg_per_l) %>%
   mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
   mutate(TOC_mg_per_l_before_dilution = TOC_mg_per_l*20) %>% 
   mutate(mg_TOC_per_30ml = TOC_mg_per_l_before_dilution * 0.030) %>%
