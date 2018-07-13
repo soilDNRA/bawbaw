@@ -17,14 +17,14 @@ bawbaw_TOC_60to97$X3 <- gsub("_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*"
 
 
 bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
-  rename(sample_name = X3, sample_ID = X4, TOC_mg_per_l = X5) %>%
-  select(sample_name, sample_ID, TOC_mg_per_l) %>%
-  mutate(sample_name=replace(sample_name, sample_name=="summit", "1500")) %>%
+  rename(elevation = X3, sample_ID = X4, TOC_mg_per_l = X5) %>%
+  select(elevation, sample_ID, TOC_mg_per_l) %>%
+  mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
   mutate(TOC_mg_per_l_before_dilution = TOC_mg_per_l*20) %>% 
   mutate(mg_TOC_per_30ml = TOC_mg_per_l_before_dilution * 0.030) %>%
   mutate(ug_TOC_per_30ml = mg_TOC_per_30ml * 1000 ) %>% 
   mutate(ug_TOC_per_g_soil = ug_TOC_per_30ml / 3) %>% # calculate original concentration
-  group_by(sample_name) %>% 
+  group_by(elevation) %>% 
   summarise(mean_ug_TOC_per_g_soil = mean(ug_TOC_per_g_soil))
 
 # read mineral N data
@@ -36,19 +36,19 @@ bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2 # N.B.!! first need to convert
 bawbaw_mineral_N$sample <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove "SP." from sample names to just give elevation.
 
 bawbaw_mineral_N_means <- bawbaw_mineral_N %>%
-  rename(nitrate = `N-Nitrate (mg/L)`, ammonium = `N-Ammonium (mg/L)`) %>% #rename column to make it easier to type!
-  select(sample, nitrate, ammonium) %>% #just keep the necessary data columns
-  filter(sample != "blank") %>% # remove blank samples
+  rename(elevation = sample, nitrate = `N-Nitrate (mg/L)`, ammonium = `N-Ammonium (mg/L)`) %>% #rename column to make it easier to type!
+  select(elevation, nitrate, ammonium) %>% #just keep the necessary data columns
+  filter(elevation != "blank") %>% # remove blank samples
   mutate(nitrate = as.numeric(nitrate)) %>% # convert from character to numeric data
   mutate(ammonium = as.numeric(ammonium)) %>% # convert from character to numeric data
-  mutate(sample =replace(sample, sample=="summit", "1500")) %>% # replace "summit" with "1500"
+  mutate(elevation =replace(elevation, elevation=="summit", "1500")) %>% # replace "summit" with "1500"
   mutate(total_NO3_in_extract_mg = nitrate * 0.1,
              total_NO3_in_extract_ug = total_NO3_in_extract_mg * 1000,
              total_NO3_per_g_soil_ug = total_NO3_in_extract_ug / 10) %>% # calculate mean for nitrate
   mutate(total_NH4_in_extract_mg = ammonium * 0.1,
          total_NH4_in_extract_ug = total_NH4_in_extract_mg * 1000,
          total_NH4_per_g_soil_ug = total_NH4_in_extract_ug / 10) %>% # calculate mean for ammonium
-  group_by(sample) %>% 
+  group_by(elevation) %>% 
   summarise_at(c("total_NO3_per_g_soil_ug", "total_NH4_per_g_soil_ug"), mean)
 
 
