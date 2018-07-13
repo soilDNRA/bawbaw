@@ -54,7 +54,8 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N %>%
 
 # calculate C/NO3- ratio and C/mineral-N ratio
 combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
-combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = mean_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
+combined_NC_means <- combined_NC_means %>% select(-elevation1) %>% #remove extra elevation column
+  mutate(C_nitrate_ratio = mean_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
                                                   C_mineral_N_ratio = mean_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
 
 # write .rds and .csv and .tsv file with data
