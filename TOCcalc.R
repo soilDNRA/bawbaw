@@ -88,8 +88,10 @@ combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
 combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
                                                   C_mineral_N_ratio = avg_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
 
-# write .rds file with data
+# write .rds and .csv and .tsv file with data
 write_rds(combined_NC_means,"combined_NC_means.rds")
+write_csv(combined_NC_means,"combined_NC_means.csv")
+write_tsv(combined_NC_means,"combined_NC_means.tsv")
 
 #print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
 combined_NC_means2 <- combined_NC_means
@@ -102,5 +104,5 @@ combined_NC_means2 <- combined_NC_means2 %>%
 names(combined_NC_means2) <- c("Elevation", "HWC/nitrate-N", "HWC/mineral-N")
 kable(combined_NC_means2) %>%
   kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  save_kable(file = "table1.html", self_contained = T)
+  save_kable(file = "HWC_N_ratios.html", self_contained = T)
 
