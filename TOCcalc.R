@@ -9,33 +9,34 @@ library(knitr)
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
 newnames <- scan("50to59_sample_names", character(), quote = "") #replace "untitled" with sample names in 50to59
 bawbaw_TOC_50to59$X3 <- newnames
+bawbaw_TOC_50to59$X3 <- gsub("m_SP.*", "", bawbaw_TOC_50to59$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
+bawbaw_TOC_50to59$X3 <- gsub("_SP.*", "", bawbaw_TOC_50to59$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
 
 bawbaw_TOC_60to97 <- read_table2(col_names = FALSE, "TOC_results/2018-07-04_Baw_Baw_60to97_diluted_1to20.txt", skip = 13)
-bawbaw_TOC_50to97 <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97)
-bawbaw_TOC <- bawbaw_TOC_50to97 %>% 
-  select(X3,X4,X5) %>% 
-  mutate(X5 = X5*20) # calculate original concentration
+bawbaw_TOC_60to97 <- bawbaw_TOC_60to97[-c(4, 20), ] # delete 200SP2_... because they are duplicates (mislabelled?)
+bawbaw_TOC_60to97$X3 <- gsub("m_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*" from sample names to just give elevation.
+bawbaw_TOC_60to97$X3 <- gsub("_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
 
-rename(bawbaw_TOC, sample_name = X3, sample_ID = X4, TOC_mg_per_l = X5)
 
-bawbaw_TOC$X3 <- gsub("_HWC_diluted1to20", "", bawbaw_TOC$X3) # remove "_HWC_diluted1to20" from sample names
+bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
+  rename(sample_name = X3, sample_ID = X4, TOC_mg_per_l = X5) %>%
+  select(sample_name, sample_ID, TOC_mg_per_l) %>%
+  mutate(sample_name=replace(sample_name, sample_name=="summit", "1500")) %>%
+  mutate(TOC_mg_per_l_before_dilution = TOC_mg_per_l*20) %>% 
+  mutate(mg_TOC_per_30ml = TOC_mg_per_l_before_dilution * 0.030) %>%
+  mutate(ug_TOC_per_30ml = mg_TOC_per_30ml * 1000 ) %>% 
+  mutate(ug_TOC_per_g_soil = ug_TOC_per_30ml / 3) %>% # calculate original concentration
+  group_by(sample_name) %>% 
+  summarise(mean_ug_TOC_per_g_soil = mean(ug_TOC_per_g_soil))
 
-bawbaw_TOC$elevation <- gsub("_SP.", "", bawbaw_TOC$X3) # remove "_SP." from sample names to just give elevation.
+# # replace "summit" with "1500"
+# bawbaw_TOC$sample_name <- gsub("m_SP.", "", bawbaw_TOC$sample_name) # remove "_SP." from sample names to just give elevation.
+# bawbaw_TOC$sample_name <- gsub("_SP.", "", bawbaw_TOC$sample_name) # remove "_SP." from sample names to just give elevation.
 
-# replace "summit" with "1500"
-bawbaw_TOC <- bawbaw_TOC %>%
-  mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
-  as.data.frame()
-
-bawbaw_TOC_means <- bawbaw_TOC %>% 
-  group_by(elevation) %>% 
-  summarise(avg_TOC = mean(X5))
+bawbaw_TOC_means <- bawbaw_TOC 
 
 #calculate HWC micrograms C per gram of soil.
-bawbaw_TOC_means <- bawbaw_TOC_means %>% 
-  mutate(avg_mg_TOC_per_30ml = avg_TOC * 0.030) %>%
-  mutate(avg_ug_TOC_per_30ml = avg_mg_TOC_per_30ml * 1000 ) %>% 
-  mutate(avg_ug_TOC_per_g_soil = avg_ug_TOC_per_30ml / 3)
+bawbaw_TOC_means <- bawbaw_TOC_means 
 
 
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
