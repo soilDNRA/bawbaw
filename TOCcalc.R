@@ -1,8 +1,6 @@
 library(readr)
 library(tidyverse)
 library(readxl)
-library(formattable)
-library(kableExtra)
 library(knitr)
 
 
@@ -29,65 +27,35 @@ bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
   group_by(sample_name) %>% 
   summarise(mean_ug_TOC_per_g_soil = mean(ug_TOC_per_g_soil))
 
-# # replace "summit" with "1500"
-# bawbaw_TOC$sample_name <- gsub("m_SP.", "", bawbaw_TOC$sample_name) # remove "_SP." from sample names to just give elevation.
-# bawbaw_TOC$sample_name <- gsub("_SP.", "", bawbaw_TOC$sample_name) # remove "_SP." from sample names to just give elevation.
-
-bawbaw_TOC_means <- bawbaw_TOC 
-
-#calculate HWC micrograms C per gram of soil.
-bawbaw_TOC_means <- bawbaw_TOC_means 
-
+# read mineral N data
 
 bawbaw_mineral_N <- read_excel("18. 3422 Eric 180704 - SFA Report 18.07.10.xls", 
                                                        skip = 14) #read KCl data
 
-bawbaw_mineral_N <- rename(bawbaw_mineral_N, nitrate = `N-Nitrate (mg/L)`) #rename column to make it easier to type!
-bawbaw_mineral_N <- rename(bawbaw_mineral_N, ammonium = `N-Ammonium (mg/L)`) #rename column to make it easier to type!
+bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2 # N.B.!! first need to convert <0.2 to 0.2
+bawbaw_mineral_N$sample <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove "SP." from sample names to just give elevation.
 
-# N.B.!! first need to convert <0.2 to 0.2
-
-bawbaw_mineral_N[bawbaw_mineral_N=="<0.2"] <- 0.2
-
-bawbaw_mineral_N <- bawbaw_mineral_N %>%
-  select(sample, nitrate, ammonium) #just keep the necessary data columns
-
-bawbaw_mineral_N <- bawbaw_mineral_N %>% filter(sample != "blank") # remove blank samples
-
-bawbaw_mineral_N$elevation <- gsub("SP.", "", bawbaw_mineral_N$sample) # remove "SP." from sample names to just give elevation.
-
-# convert from character to numeric data
-bawbaw_mineral_N$nitrate <- as.numeric(bawbaw_mineral_N$nitrate)
-bawbaw_mineral_N$ammonium <- as.numeric(bawbaw_mineral_N$ammonium)
-
-# calculate means for nitrate and ammonium using dplyr
-bawbaw_mineral_N_means <- bawbaw_mineral_N %>% 
-  group_by(elevation) %>% 
-  summarise_at(c("nitrate", "ammonium"), mean) 
-
-# replace "summit" with "1500m"
-bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>%
-  mutate(elevation=replace(elevation, elevation=="summit", "1500")) %>%
-  as.data.frame()
-
-# add "m" to elevations (so that they match up with TOC data) https://stackoverflow.com/questions/36302300/adding-the-degree-symbol-at-the-end-of-each-vector-element-in-r
-# bawbaw_mineral_N_means$elevation <- paste0(bawbaw_mineral_N_means$elevation,"m")
-
-# calculate N-nitrate per gram of soil
-bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NO3_in_extract_mg = nitrate * 0.1,
-                                                           total_NO3_in_extract_ug = total_NO3_in_extract_mg * 1000,
-                                                           total_NO3_per_g_soil_ug = total_NO3_in_extract_ug / 10)
-# calculate ammonium-N per gram of soil
-bawbaw_mineral_N_means <- bawbaw_mineral_N_means %>% mutate(total_NH4_in_extract_mg = ammonium * 0.1,
-                                                            total_NH4_in_extract_ug = total_NH4_in_extract_mg * 1000,
-                                                            total_NH4_per_g_soil_ug = total_NH4_in_extract_ug / 10)
+bawbaw_mineral_N_means <- bawbaw_mineral_N %>%
+  rename(nitrate = `N-Nitrate (mg/L)`, ammonium = `N-Ammonium (mg/L)`) %>% #rename column to make it easier to type!
+  select(sample, nitrate, ammonium) %>% #just keep the necessary data columns
+  filter(sample != "blank") %>% # remove blank samples
+  mutate(nitrate = as.numeric(nitrate)) %>% # convert from character to numeric data
+  mutate(ammonium = as.numeric(ammonium)) %>% # convert from character to numeric data
+  mutate(sample =replace(sample, sample=="summit", "1500")) %>% # replace "summit" with "1500"
+  mutate(total_NO3_in_extract_mg = nitrate * 0.1,
+             total_NO3_in_extract_ug = total_NO3_in_extract_mg * 1000,
+             total_NO3_per_g_soil_ug = total_NO3_in_extract_ug / 10) %>% # calculate mean for nitrate
+  mutate(total_NH4_in_extract_mg = ammonium * 0.1,
+         total_NH4_in_extract_ug = total_NH4_in_extract_mg * 1000,
+         total_NH4_per_g_soil_ug = total_NH4_in_extract_ug / 10) %>% # calculate mean for ammonium
+  group_by(sample) %>% 
+  summarise_at(c("total_NO3_per_g_soil_ug", "total_NH4_per_g_soil_ug"), mean)
 
 
 # calculate C/NO3- ratio and C/mineral-N ratio
-
 combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
-combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = avg_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
-                                                  C_mineral_N_ratio = avg_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
+combined_NC_means <- combined_NC_means %>% mutate(C_nitrate_ratio = mean_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
+                                                  C_mineral_N_ratio = mean_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
 
 # write .rds and .csv and .tsv file with data
 write_rds(combined_NC_means,"combined_NC_means.rds")
