@@ -5,12 +5,25 @@ library(knitr)
 
 
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
+
+
 newnames <- scan("50to59_sample_names", character(), quote = "") #replace "untitled" with sample names in 50to59
 bawbaw_TOC_50to59$X3 <- newnames
+bawbaw_TOC_50to59 %>%
+  rename(`Sample name` = X3, `sample ID`=X4, `TOC mg/L` = X5, `TC mg/L` = X6, `IC mg/L` = X7) %>%
+  select(`Sample name`:`IC mg/L`) %>%
+  write_csv("TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20_filtered_results.csv") # write raw results to csv file for printing in lab notebook
+
 bawbaw_TOC_50to59$X3 <- gsub("m_SP.*", "", bawbaw_TOC_50to59$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
 bawbaw_TOC_50to59$X3 <- gsub("_SP.*", "", bawbaw_TOC_50to59$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
 
 bawbaw_TOC_60to97 <- read_table2(col_names = FALSE, "TOC_results/2018-07-04_Baw_Baw_60to97_diluted_1to20.txt", skip = 13)
+bawbaw_TOC_60to97 %>%
+  rename(`Sample name` = X3, `sample ID`=X4, `TOC mg/L` = X5, `TC mg/L` = X6, `IC mg/L` = X7) %>%
+  select(`Sample name`:`IC mg/L`) %>%
+  write_csv("TOC_results/2018-07-02_Baw_Baw_60to97_diluted_1to20_filtered_results.csv") # write raw results to csv file for printing in lab notebook
+
+
 bawbaw_TOC_60to97 <- bawbaw_TOC_60to97[-c(4, 20), ] # delete 200SP2_... because they are duplicates (mislabelled?)
 bawbaw_TOC_60to97$X3 <- gsub("m_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*" from sample names to just give elevation.
 bawbaw_TOC_60to97$X3 <- gsub("_SP.*", "", bawbaw_TOC_60to97$X3) # remove "_SP.*" from "summit" sample names to just give elevation.
@@ -63,10 +76,12 @@ write_rds(combined_NC_means,"combined_NC_means.rds")
 write_csv(combined_NC_means,"combined_NC_means.csv")
 write_tsv(combined_NC_means,"combined_NC_means.tsv")
 
+
+
 #print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
 combined_NC_means2 <- combined_NC_means
-combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 2)
-combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 2)
+combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 1)
+combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 1)
 combined_NC_means2 <- combined_NC_means2 %>%
   mutate(elevation = factor(elevation, levels = c("200", "300", "500", "600", "800", "900", "1000", "1100","1200", "1300", "1400","1500"))) %>% 
   arrange(elevation) %>% 
