@@ -26,3 +26,5 @@ vignettes/*.pdf
 #output files
 *.html
 *.docx
+*.pdf
+*.png
