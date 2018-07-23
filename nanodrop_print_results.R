@@ -2,7 +2,7 @@ library(readr)
 library(tidyverse)
 library(readxl)
 library(knitr)
-library(formattable)
+#library(formattable)
 library(kableExtra)
 library(magick)
 
@@ -35,6 +35,8 @@ nanodrop <- read_csv("nanodrop/2018-07-19_nanodrop_report.csv") %>%
                             cell_spec(`260/230`, "html", color = "red", bold = T),
                             cell_spec(`260/230`, "html", color = "green")))  %>%
   kable("latex", caption = "2018-07-19 Nanodrop results", escape = F, booktabs = T) %>%
-  kable_as_image("my_latex_table")
+  kable_as_image(filename = "my_latex_table",file_format = "png",
+                 latex_header_includes = NULL, keep_pdf = FALSE, density = 300,
+                 keep_tex = FALSE)
 # 
 # 
