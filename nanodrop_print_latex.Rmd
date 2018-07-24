@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(readr)
 library(tidyverse)
 library(kableExtra)
-nanodrop <- read_csv("nanodrop/2018-07-19_nanodrop_report.csv")# %>% 
+nanodrop <- read_tsv("nanodrop/2018-07-20_nanodrop_report.tsv", skip = 1,col_names = c("#","Sample ID","User name","Date and Time","Nucleic Acid Conc.","Unit","A260","A280","260/280","260/230",	"Sample Type","Factor"))# %>% 
 #  select(`Sample ID`,`Nucleic Acid Conc.`, `260/280`, `260/230`)
 ```
 
@@ -19,7 +19,7 @@ nanodrop %>%
                     `260/230`=cell_spec(`260/230`,color = ifelse(`260/230`<1.8,"red","black")))  %>%
   select(`Sample ID`,`Nucleic Acid Conc.`, `260/280`, `260/230`,`Date and Time`,`Sample Type`) %>%
   rename(`Conc. (ng/µl)`= `Nucleic Acid Conc.`) %>%
-  kable("latex", escape = F, booktabs = T) %>%
+  kable("latex", escape = F, booktabs = F) %>%
   kable_styling(latex_options = c("hold_position","striped")) %>% 
   column_spec(1, bold = T)
 ```
