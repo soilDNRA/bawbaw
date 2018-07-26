@@ -38,6 +38,7 @@ bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
   mutate(mg_TOC_per_30ml = TOC_mg_per_l_before_dilution * 0.030) %>%
   mutate(ug_TOC_per_30ml = mg_TOC_per_30ml * 1000 ) %>% 
   mutate(ug_TOC_per_g_soil = ug_TOC_per_30ml / 3) %>% # calculate original concentration
+  mutate_if(is.character, as.factor) %>% 
   group_by(elevation) %>% 
   summarise(mean_ug_TOC_per_g_soil = mean(ug_TOC_per_g_soil), sd = sd(ug_TOC_per_g_soil)) # %>% 
 
