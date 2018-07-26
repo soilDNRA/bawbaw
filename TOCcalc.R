@@ -2,6 +2,7 @@ library(readr)
 library(tidyverse)
 library(readxl)
 library(knitr)
+library(kableExtra)
 
 
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
