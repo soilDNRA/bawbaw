@@ -28,13 +28,13 @@ library(magick)
 nanodrop <- read_csv("nanodrop/2018-07-19_nanodrop_report.csv") %>% 
   select(`Sample ID`,`Nucleic Acid Conc.`, `260/280`, `260/230`) %>% 
   rename(`DNA conc. (ng/ul)` = `Nucleic Acid Conc.`) %>% 
-  # mutate(`260/280` = ifelse(`260/280` < 1.80,
-  #                           cell_spec(`260/280`, "html", color = "red", bold = T),
-  #                           cell_spec(`260/280`, "html", color = "green")),
-  #        `260/230` = ifelse(`260/230` < 1.80,
-  #                           cell_spec(`260/230`, "html", color = "red", bold = T),
-  #                           cell_spec(`260/230`, "html", color = "green")))  %>%
-  kable("latex", caption = "2018-07-19 Nanodrop results", booktabs = T) #%>%
+  mutate(`260/280` = ifelse(`260/280` < 1.80,
+                            cell_spec(`260/280`, "html", color = "red", bold = T),
+                            cell_spec(`260/280`, "html", color = "green")),
+         `260/230` = ifelse(`260/230` < 1.80,
+                            cell_spec(`260/230`, "html", color = "red", bold = T),
+                            cell_spec(`260/230`, "html", color = "green")))  %>%
+  kable("html", caption = "2018-07-19 Nanodrop results", booktabs = T, escape = F) #%>%
 #   kable_as_image(filename = "my_latex_table",file_format = "png",
 #                  latex_header_includes = NULL, keep_pdf = FALSE, density = 300,
 #                  keep_tex = FALSE)

@@ -24,8 +24,8 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.userR
 #output files
-*.html
 *.docx
 *.pdf
 *.png
 .Rproj.user
+nanodrop_print_results.R
