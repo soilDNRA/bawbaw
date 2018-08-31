@@ -29,3 +29,4 @@ vignettes/*.pdf
 *.png
 .Rproj.user
 nanodrop_print_results.R
+*.scr
