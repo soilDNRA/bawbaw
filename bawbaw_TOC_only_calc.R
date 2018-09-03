@@ -48,15 +48,15 @@ elevation_levels <- c("200","300","500","600","800","900","1000","1100","1200","
 
 parse_factor(bawbaw_TOC_means$elevation, elevation_levels)
 
-
-kable(bawbaw_TOC_means)%>%
+names(bawbaw_TOC_means) <- c("Elevation", "mean TOC (µg/g soil)")
+kable(bawbaw_TOC_means) %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 
-# see http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
-p<- ggplot(bawbaw_TOC_means, aes(x=elevation, y=mean_ug_TOC_per_g_soil)) + 
-  geom_bar(stat="identity", color="black", 
-           position=position_dodge()) +
-  geom_errorbar(aes(ymin=mean_ug_TOC_per_g_soil-sd, ymax=mean_ug_TOC_per_g_soil+sd), width=.2,
-                position=position_dodge(.9))
-
-p
+# # see http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
+# p<- ggplot(bawbaw_TOC_means, aes(x=elevation, y=mean_ug_TOC_per_g_soil)) + 
+#   geom_bar(stat="identity", color="black", 
+#            position=position_dodge()) +
+#   geom_errorbar(aes(ymin=mean_ug_TOC_per_g_soil-sd, ymax=mean_ug_TOC_per_g_soil+sd), width=.2,
+#                 position=position_dodge(.9))
+# 
+# p

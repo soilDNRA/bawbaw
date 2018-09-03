@@ -21,7 +21,7 @@ library(car)
 library(tidyverse)
 library(readxl)
 library(knitr)
-library(kableExtra)
+# library(kableExtra)
 
 narG <- read_csv("narG.csv")
 # nirS <- read_csv("nirS.csv")
