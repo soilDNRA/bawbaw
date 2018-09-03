@@ -25,6 +25,7 @@ narG <- read_csv("narG.csv")
 nosZ <- read_csv("nosZ.csv")
 rRNA16S <- read_csv("bact16S.csv")
 nirK <- read_csv("nirK.csv")
+nrfA <- read_csv("nrfA.csv")
 ```
 
 #### Bacterial 16S rRNA abundance
@@ -342,4 +343,83 @@ nirK_p <- unname(anovatablenirK$`Pr(>F)`[1])
 
 <!-- could use `r round(rRNAp,3)` to report p value. -->
 *nirK* gene abundance did not vary significantly between elevations (*F*-test, $p=`r ifelse(nirK_p < 0.01, "<0.01", ifelse(nirK_p < 0.05, "<0.05",round(nirK_p, 3)))`$).
+
+
+```{r nrfA, echo=FALSE, fig.cap="Results of qPCR for *nrfA* gene. Error bars show SEM. Efficiency = 63.4%, $R^{2} = 0.99$. \\label{nrfAgraph}"}
+nrfA$copiespergram <- (nrfA$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nrfA$log10copiespergram <- log10((nrfA$SQ*1000)/0.25) #log base 10 transform data
+nrfA$logecopiespergram <- log((nrfA$SQ*1000)/0.25) #log base e transform data
+
+# colnames(nrfA)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nrfA_summary <- summarySE(nrfA, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+
+nrfA2 <- nrfA_summary
+nrfA2$sample_elevation <- factor(nrfA2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
+# nrfA2$time <- factor(nrfA2$time)
+
+
+# Error bars represent standard error of the mean
+ggplot(nrfA2, aes(x=sample_elevation, y=logecopiespergram)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))+
+  labs(
+    x = "sample elevation (m)",
+    y = "log(copies per gram soil)"
+  )
+```
+
+
+```{r echo=TRUE}
+linear.model.nrfA <- lm(formula = logecopiespergram ~ sample_elevation, data = nrfA)
+anovatablenrfA <- Anova(linear.model.nrfA, type="II")
+nrfA_p <- unname(anovatablenrfA$`Pr(>F)`[1])
+```
+
+
+<!-- could use `r round(rRNAp,3)` to report p value. -->
+*nrfA* gene abundance varied significantly between elevations (*F*-test, $p=`r ifelse(nrfA_p < 0.01, "<0.01", ifelse(nrfA_p < 0.05, "<0.05",round(nrfA_p, 3)))`$).
 
