@@ -35,7 +35,7 @@ nrfA <- read_csv("nrfA.csv")
 
 ### Baw Baw HWC/nitrate ratios
 
-``` {r echo=FALSE}
+``` {r TOC, echo=FALSE, message = FALSE}
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
 
 
@@ -127,7 +127,7 @@ kable(combined_NC_means2) %>%
 #### Bacterial 16S rRNA abundance
 
 
-```{r rRNA16S, echo=FALSE, fig.cap="Results of qPCR for *rRNA16S* gene. Error bars show SEM. Efficiency = 100.2%, $R^{2} = 0.99$. \\label{rRNA16Sgraph}"}
+```{r rRNA16S, echo=FALSE, , message = FALSE, fig.cap="Results of qPCR for *rRNA16S* gene. Error bars show SEM. Efficiency = 100.2%, $R^{2} = 0.99$. \\label{rRNA16Sgraph}"}
 rRNA16S$copiespergram <- (rRNA16S$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 rRNA16S$log10copiespergram <- log10((rRNA16S$SQ*1000)/0.25) #log base 10 transform data
 rRNA16S$logecopiespergram <- log((rRNA16S$SQ*1000)/0.25) #log base e transform data
