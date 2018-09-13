@@ -245,7 +245,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-rRNA16S_summary <- summarySE(rRNA16S, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+rRNA16S_summary <- summarySE(rRNA16S, measurevar="log10copiespergram", groupvars="sample_elevation") #not sure if this is correct!
 
 rRNA16S2 <- rRNA16S_summary
 rRNA16S2$sample_elevation <- factor(rRNA16S2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
@@ -253,9 +253,9 @@ rRNA16S2$sample_elevation <- factor(rRNA16S2$sample_elevation, levels=c("200","3
 
 
 # Error bars represent standard error of the mean
-ggplot(rRNA16S2, aes(x=sample_elevation, y=logecopiespergram)) + 
+ggplot(rRNA16S2, aes(x=sample_elevation, y=log10copiespergram)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+    geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
@@ -265,7 +265,7 @@ ggplot(rRNA16S2, aes(x=sample_elevation, y=logecopiespergram)) +
 ```
 
 ```{r echo=FALSE}
-linear.model.rRNA <- lm(formula = logecopiespergram ~ sample_elevation, data = rRNA16S)
+linear.model.rRNA <- lm(formula = log10copiespergram ~ sample_elevation, data = rRNA16S)
 anovatablerRNA <- Anova(linear.model.rRNA, type="II")
 rRNAp <- unname(anovatablerRNA$`Pr(>F)`[1])
 ```
@@ -322,7 +322,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-nosZ_summary <- summarySE(nosZ, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+nosZ_summary <- summarySE(nosZ, measurevar="log10copiespergram", groupvars="sample_elevation") #not sure if this is correct!
 
 nosZ2 <- nosZ_summary
 nosZ2$sample_elevation <- factor(nosZ2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
@@ -330,9 +330,9 @@ nosZ2$sample_elevation <- factor(nosZ2$sample_elevation, levels=c("200","300","5
 
 
 # Error bars represent standard error of the mean
-ggplot(nosZ2, aes(x=sample_elevation, y=logecopiespergram)) + 
+ggplot(nosZ2, aes(x=sample_elevation, y=log10copiespergram)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+    geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
@@ -343,7 +343,7 @@ ggplot(nosZ2, aes(x=sample_elevation, y=logecopiespergram)) +
 
 
 ```{r echo=FALSE}
-linear.model.nosZ <- lm(formula = logecopiespergram ~ sample_elevation, data = nosZ)
+linear.model.nosZ <- lm(formula = log10copiespergram ~ sample_elevation, data = nosZ)
 anovatablenosZ <- Anova(linear.model.nosZ, type="II")
 nosZ_p <- unname(anovatablenosZ$`Pr(>F)`[1])
 ```
@@ -401,7 +401,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-narG_summary <- summarySE(narG, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+narG_summary <- summarySE(narG, measurevar="log10copiespergram", groupvars="sample_elevation") #not sure if this is correct!
 
 narG2 <- narG_summary
 narG2$sample_elevation <- factor(narG2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
@@ -409,9 +409,9 @@ narG2$sample_elevation <- factor(narG2$sample_elevation, levels=c("200","300","5
 
 
 # Error bars represent standard error of the mean
-ggplot(narG2, aes(x=sample_elevation, y=logecopiespergram)) + 
+ggplot(narG2, aes(x=sample_elevation, y=log10copiespergram)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+    geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
@@ -422,7 +422,7 @@ ggplot(narG2, aes(x=sample_elevation, y=logecopiespergram)) +
 
 
 ```{r echo=FALSE}
-linear.model.narG <- lm(formula = logecopiespergram ~ sample_elevation, data = narG)
+linear.model.narG <- lm(formula = log10copiespergram ~ sample_elevation, data = narG)
 anovatablenarG <- Anova(linear.model.narG, type="II")
 narG_p <- unname(anovatablenarG$`Pr(>F)`[1])
 ```
@@ -480,7 +480,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-nirK_summary <- summarySE(nirK, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+nirK_summary <- summarySE(nirK, measurevar="log10copiespergram", groupvars="sample_elevation") #not sure if this is correct!
 
 nirK2 <- nirK_summary
 nirK2$sample_elevation <- factor(nirK2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
@@ -488,9 +488,9 @@ nirK2$sample_elevation <- factor(nirK2$sample_elevation, levels=c("200","300","5
 
 
 # Error bars represent standard error of the mean
-ggplot(nirK2, aes(x=sample_elevation, y=logecopiespergram)) + 
+ggplot(nirK2, aes(x=sample_elevation, y=log10copiespergram)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+    geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
@@ -501,7 +501,7 @@ ggplot(nirK2, aes(x=sample_elevation, y=logecopiespergram)) +
 
 
 ```{r echo=FALSE}
-linear.model.nirK <- lm(formula = logecopiespergram ~ sample_elevation, data = nirK)
+linear.model.nirK <- lm(formula = log10copiespergram ~ sample_elevation, data = nirK)
 anovatablenirK <- Anova(linear.model.nirK, type="II")
 nirK_p <- unname(anovatablenirK$`Pr(>F)`[1])
 ```
@@ -559,7 +559,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-nrfA_summary <- summarySE(nrfA, measurevar="logecopiespergram", groupvars="sample_elevation") #not sure if this is correct!
+nrfA_summary <- summarySE(nrfA, measurevar="log10copiespergram", groupvars="sample_elevation") #not sure if this is correct!
 
 nrfA2 <- nrfA_summary
 nrfA2$sample_elevation <- factor(nrfA2$sample_elevation, levels=c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500"))
@@ -567,9 +567,9 @@ nrfA2$sample_elevation <- factor(nrfA2$sample_elevation, levels=c("200","300","5
 
 
 # Error bars represent standard error of the mean
-ggplot(nrfA2, aes(x=sample_elevation, y=logecopiespergram)) + 
+ggplot(nrfA2, aes(x=sample_elevation, y=log10copiespergram)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+    geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
@@ -580,7 +580,7 @@ ggplot(nrfA2, aes(x=sample_elevation, y=logecopiespergram)) +
 
 
 ```{r echo=FALSE}
-linear.model.nrfA <- lm(formula = logecopiespergram ~ sample_elevation, data = nrfA)
+linear.model.nrfA <- lm(formula = log10copiespergram ~ sample_elevation, data = nrfA)
 anovatablenrfA <- Anova(linear.model.nrfA, type="II")
 nrfA_p <- unname(anovatablenrfA$`Pr(>F)`[1])
 ```
