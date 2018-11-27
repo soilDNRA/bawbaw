@@ -1,3 +1,5 @@
+#sequencing
+*.gz
 # History files
 .Rhistory
 .Rapp.history
@@ -30,3 +32,4 @@ vignettes/*.pdf
 .Rproj.user
 nanodrop_print_results.R
 *.scr
+.DS_Store
