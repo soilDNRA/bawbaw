@@ -1,0 +1,45 @@
+---
+title: "3rd Year Annual Review: Microbial communities performing dissimilatory nitrate reduction to ammonium in Australian forest soils"
+author: "Eric Ireland"
+date: "`r Sys.Date()`"
+output: word_document
+bibliography: PhD.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(citr)
+library(printr)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+This is a test [@ghaniHotwaterExtractableCarbon2003].
+
+## test table
+
+V1         Tweedledee       Tweedledum
+--------   --------------   ----------------
+Age        14               14
+Height     3'2"             3'2"
+Politics   Conservative     Conservative
+Religion   "New Age"        Syrian Orthodox
+---------  --------------   ----------------
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

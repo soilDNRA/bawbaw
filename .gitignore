@@ -34,3 +34,4 @@ vignettes/*.pdf
 nanodrop_print_results.R
 *.scr
 .DS_Store
+*.bib
