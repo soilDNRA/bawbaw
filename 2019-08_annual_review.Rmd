@@ -1,5 +1,5 @@
 ---
-title: "3rd Year Annual Review: Microbial communities performing dissimilatory nitrate reduction to ammonium in Australian forest soils"
+title: "3rd Year Annual Review: Microbial communities performing DNRA in Australian forest soils"
 author: "Eric Ireland"
 date: "`r Sys.Date()`"
 output: word_document
@@ -18,35 +18,61 @@ library(flextable)
 #     `Progress on writing task (%)` = col_character()))
 # chapters <- read_csv("chapters.csv")
 chapters <- read_csv("chapters.csv", col_types = cols(chap.no = col_integer(), 
-     progress.lab = col_integer(), 
-     progress.writing = col_integer()))
+     progress.lab = col_character (), 
+     progress.writing = col_character()))
 ```
 
-This is a test [@ghaniHotwaterExtractableCarbon2003].
-
-## test table
 
 ```{r chapter_table,echo=FALSE}
-
 chapter_table <- flextable(chapters)
-chapter_table <- theme_booktabs(chapter_table)
+chapter_table <- theme_box(chapter_table)
+chapter_table <- bg(chapter_table, bg = "gray89", part = "header")
 chapter_table <- merge_h_range(chapter_table, i = ~is.na(chap.no), j1 = "chap.description", j2 = "finish.date")
 chapter_table <- bold(chapter_table, i = ~!is.na(chap.no))
 chapter_table <- align( chapter_table, align = "center", part="header" )
+center_key <- c("progress.lab","progress.writing")
+chapter_table <- align( chapter_table, align = "center", j=center_key,part="body")
 chapter_table <- font(chapter_table, part="all", fontname = "Times")
 chapter_table <- fontsize(chapter_table, part="all", size = 10)
 chapter_table <- set_header_labels(chapter_table, chap.no="Chap. No.",
                                    chap.description="Chapter description",
-                                   progress.lab="Progress on lab/field task (%)",
-                                   progress.writing="Progress on writing task (%)",
-                                   finish.date="Expected finish date")
+                                   progress.lab="Progress lab/field",
+                                   progress.writing="Progress writing",
+                                   finish.date="Planned finish date")
 chapter_table <- height_all(chapter_table, height = .3)
-chapter_table <- width(chapter_table, j="chap.description", width = 3.5)
+chapter_table <- width(chapter_table, j="chap.description", width = 3.6)
 chapter_table <- width(chapter_table, j="chap.no", width = .6)
-int_keys <- c("chap.no", "progress.lab", "progress.writing")
-chapter_table <- colformat_int(x = chapter_table, col_keys = int_keys)
-chapter_table <- set_caption(chapter_table, "Thesis and Research Plan.")
+big_border = fp_border(color="black", width = 2)
+chapter_table <- hline(chapter_table, i = ~is.na(chap.no), border = big_border, part = "body" )
+chapter_table <- hline(chapter_table,border = big_border,part = "header")
+chapter_table <- set_caption(chapter_table, "Thesis Chapters and Research Plan.")
 chapter_table
-
 ```
+
+# Introduction
+
+This report summarises progress since the second year annual review (in March 2018). Since that time, I have narrowed the scope of my PhD to forest soils only. The PhD will be written in the traditional format, instead of thesis by publication.
+
+# Chapter 4
+## Soil microbial communities and microbial N-cycling gene abundance along an elevational gradient at Mount Baw Baw
+
+Sabine Kasel and Craig Nitschke at Burnley had weather stations positioned along an elevational gradient at Mount Baw Baw. They have  collected soil properties and performed flora surveys, and investigated the mycorrhizal communities across the gradient using next generation sequencing. They also have 16S rRNA sequence data, which has not yet been analysed.
+
+Soils were collected from 4 subplots at 12 sites at different elevations in April 2019. The following data were collected:
+
+* Mineral N (NH~4~^+^,NO~3~^-^) in fresh soil
+* Labile C was analysed and the labile C / NO~3~^-^ ratio calculated.
+* 16S rRNA amplicons sequencing (metabarcoding) via Illumina MiSeq (at AGRF) to reveal differences in microbial communities at different elevations.
+* Sequence data has been processed by Qinglin Chen to analyse OTUs and calculate alpha and beta diversity using QIIME 2 [@bolyenReproducibleInteractiveScalable2019].
+* qPCR was performed to determine gene abundance of N cycling genes.
+* Soil from sites with the contrasting C / NO~3~ ratios were  collected for a ^15^N tracing experiment, comparing N cycling rates at 60% and 95% water holding capacity (WHC).
+
+Still to be analysed:
+
+* Basic soil properties (pH, total C, total N).
+* Combined microbiome data with soil properties, mycorrhizal fungal data and vegetation and climate data in collaboration with Sabine Kasel and Craig Nitschke from Burnley.
+
+## References
+
+
 
