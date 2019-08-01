@@ -3,7 +3,8 @@ title: "3rd Year Annual Review: Microbial communities performing DNRA in Austral
 author: "Eric Ireland"
 date: "`r Sys.Date()`"
 output: word_document
-bibliography: PhD.bib
+bibliography: references.bib
+csl: asa-cssa-sssa.csl
 ---
 
 ```{r setup, include=FALSE}
@@ -72,7 +73,7 @@ Still to be analysed:
 * Basic soil properties (pH, total C, total N).
 * Combined microbiome data with soil properties, mycorrhizal fungal data and vegetation and climate data in collaboration with Sabine Kasel and Craig Nitschke from Burnley.
 
-## References
+# References
 
 
 
