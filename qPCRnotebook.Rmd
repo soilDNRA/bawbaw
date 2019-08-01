@@ -1,0 +1,947 @@
+---
+title: "Progress Report"
+author: "Eric Ireland"
+date: "9 November 2017"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+fig_caption: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(lattice)
+library(readr)
+library(ggplot2)
+library(scales)
+narG <- read_csv("narG.csv")
+nirS <- read_csv("nirS.csv")
+AOA_amoA <- read_csv("AOA_amoA.csv")
+nosZ <- read_csv("nosZ.csv")
+rRNA16S <- read_csv("rRNA16S.csv")
+nirK <- read_csv("nirK.csv")
+```
+
+
+## test table
+
+V1         Tweedledee       Tweedledum
+--------   --------------   ----------------
+Age        14               14
+Height     3'2"             3'2"
+Politics   Conservative     Conservative
+Religion   "New Age"        Syrian Orthodox
+---------  --------------   ----------------
+
+
+
+## *nrfA*
+
+I have cloned *nrfA* using two different primer sets. So far, the efficiency has been either below 60%, or above 140%, depending on the PCR conditions used. Hangwei thought there might be something inhibiting the reaction, so I have extracted fresh plasmids and will continue to experiment with different protocols to try and get efficiency > 80%.
+
+
+## Bacterial 16S rRNA
+
+```{r rRNA16S, echo=FALSE, fig.cap="Results of qPCR for *rRNA16S* gene. Error bars show SEM. Efficiency = 80.7%, $R^{2} = 0.99$. These results were from undiluted DNA samples, so I will have to reanalyse the samples using diluted DNA. \\label{rRNA16Sgraph}"}
+rRNA16S$copiespergram <- (rRNA16S$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+rRNA16S$log10copiespergram <- log10((rRNA16S$SQ*1000)/0.25) #log base 10 transform data
+rRNA16S$logecopiespergram <- log((rRNA16S$SQ*1000)/0.25) #log base e transform data
+
+colnames(rRNA16S)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+rRNA16S_summary <- summarySE(rRNA16S, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+rRNA16S2 <- rRNA16S_summary
+rRNA16S2$treatment <- factor(rRNA16S2$treatment, levels=c("C","25","75","150"))
+rRNA16S2$time <- factor(rRNA16S2$time)
+
+
+# Error bars represent standard error of the mean
+ggplot(rRNA16S2, aes(x=time, y=copiespergram, fill=treatment)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))
+
+```
+
+## log(16S rRNA)
+```{r rRNA16S, echo=FALSE, fig.cap="Results of qPCR for *rRNA16S* gene. Error bars show SEM. Efficiency = 80.7%, $R^{2} = 0.99$. These results were from undiluted DNA samples, so I will have to reanalyse the samples using diluted DNA. \\label{rRNA16Sgraph}"}
+rRNA16S$copiespergram <- (rRNA16S$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+rRNA16S$log10copiespergram <- log10((rRNA16S$SQ*1000)/0.25) #log base 10 transform data
+rRNA16S$logecopiespergram <- log((rRNA16S$SQ*1000)/0.25) #log base e transform data
+
+colnames(rRNA16S)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+rRNA16S_summary <- summarySE(rRNA16S, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+rRNA16S2 <- rRNA16S_summary
+rRNA16S2$treatment <- factor(rRNA16S2$treatment, levels=c("C","25","75","150"))
+rRNA16S2$time <- factor(rRNA16S2$time)
+
+
+# Error bars represent standard error of the mean
+ggplot(rRNA16S2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))
+
+```
+
+## 16S archaea
+
+Not yet attempted.
+
+## ITS
+
+I have tried unsuccessfully, but all my attempts were using the CFX96 qPCR machine after it broke down (without me realising initially). I will try again using the CFX384, and order fresh primers.
+
+## AOB *amoB*
+
+I had a lot of difficulty with this gene; after many attempts, I was still unable to achieve efficiency > 80%, or $R^{2} > 0.98$. Non-specific amplification was present in the negative controls and many of the samples. This was probably caused by primer-dimers, because the melting curve showed two peaks, and multiple bands were present when I ran the PCR products on a gel. I used freshly autoclaved water to try and eliminate any contamination. The soil used for this experiment is very acidic (pH in 1:5 CaCl~2~ = 3.6), so low levels of AOB *amoA* were expected. I could keep working to optimise this assay by titrating a range of primer and MgCl~2~ concentrations, but for the purposes of these samples, I think I can just report that the AOB *amoA* levels were below the detection limit.
+
+## AOA *amoA*
+
+```{r AOA_amoA, echo=FALSE, fig.cap="Results of qPCR for AOA *amoA* gene. Error bars show 95% confidence intervals. Efficiency = 93.4%, $R^{2} = 0.97$.\\label{AOA_amoAgraph}"}
+AOA_amoA$copiespergram <- (AOA_amoA$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+AOA_amoA$log10copiespergram <- log10((AOA_amoA$SQ*1000)/0.25) #log base 10 transform data
+AOA_amoA$logecopiespergram <- log((AOA_amoA$SQ*1000)/0.25) #log base e transform data
+
+colnames(AOA_amoA)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+AOA_amoA_summary <- summarySE(AOA_amoA, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+AOA_amoA2 <- AOA_amoA_summary
+AOA_amoA2$treatment <- factor(AOA_amoA2$treatment, levels=c("C","25","75","150"))
+AOA_amoA2$time <- factor(AOA_amoA2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(AOA_amoA2, aes(x=time, y=copiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "copies per gram soil",
+    colour = "treatment"
+  )
+
+       
+```
+
+
+## log(AOA *amoA*)
+
+```{r AOA_amoA, echo=FALSE, fig.cap="Results of qPCR for AOA *amoA* gene. Error bars show 95% confidence intervals. Efficiency = 93.4%, $R^{2} = 0.97$.\\label{AOA_amoAgraph}"}
+AOA_amoA$copiespergram <- (AOA_amoA$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+AOA_amoA$log10copiespergram <- log10((AOA_amoA$SQ*1000)/0.25) #log base 10 transform data
+AOA_amoA$logecopiespergram <- log((AOA_amoA$SQ*1000)/0.25) #log base e transform data
+
+colnames(AOA_amoA)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+AOA_amoA_summary <- summarySE(AOA_amoA, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+AOA_amoA2 <- AOA_amoA_summary
+AOA_amoA2$treatment <- factor(AOA_amoA2$treatment, levels=c("C","25","75","150"))
+AOA_amoA2$time <- factor(AOA_amoA2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(AOA_amoA2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "log(copies per gram soil)",
+    colour = "treatment"
+  )
+
+       
+```
+
+## nosZ
+
+```{r nosZ, echo=FALSE, fig.cap="Results of qPCR for *nosZ* gene. Error bars show 95% confidence intervals. Efficiency = 97.0%, $R^{2} = 0.99$.\\label{nosZgraph}"}
+nosZ$copiespergram <- (nosZ$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nosZ$log10copiespergram <- log10((nosZ$SQ*1000)/0.25) #log base 10 transform data
+nosZ$logecopiespergram <- log((nosZ$SQ*1000)/0.25) #log base e transform data
+
+colnames(nosZ)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nosZ_summary <- summarySE(nosZ, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nosZ2 <- nosZ_summary
+nosZ2$treatment <- factor(nosZ2$treatment, levels=c("C","25","75","150"))
+nosZ2$time <- factor(nosZ2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nosZ2, aes(x=time, y=copiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "copies per gram soil",
+    colour = "treatment"
+  )
+
+       
+```
+
+
+## log(*nosZ*)
+
+```{r nosZ, echo=FALSE, fig.cap="Results of qPCR for *nosZ* gene. Error bars show 95% confidence intervals. Efficiency = 97.0%, $R^{2} = 0.99$.\\label{nosZgraph}"}
+nosZ$copiespergram <- (nosZ$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nosZ$log10copiespergram <- log10((nosZ$SQ*1000)/0.25) #log base 10 transform data
+nosZ$logecopiespergram <- log((nosZ$SQ*1000)/0.25) #log base e transform data
+
+colnames(nosZ)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nosZ_summary <- summarySE(nosZ, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nosZ2 <- nosZ_summary
+nosZ2$treatment <- factor(nosZ2$treatment, levels=c("C","25","75","150"))
+nosZ2$time <- factor(nosZ2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nosZ2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "log(copies per gram soil)",
+    colour = "treatment"
+  )
+
+       
+```
+
+## *nosZ* clade II
+
+I have not been able to achieve efficiency higher than 50% for this gene, but most of my attempts were on the CFX96 qPCR machine, while I believe it was broken. The primers I have been using were pre-diluted (supplied in liquid form). I will retry on the other qPCR machine using new primers.
+
+## *napA*
+I was not able to amplify this gene using one set of published primers and PCR conditions and two different PCR enzymes. I used DNA extracted from my soil and five other soil DNA samples. I may try again when using other soil DNA samples.
+
+## *narG* Results
+
+```{r narG, echo=FALSE, fig.cap="Results of qPCR for narG gene. Error bars show 95% confidence intervals. Efficiency = 93.1%, $R^{2} = 0.99$\\label{narGgraph}"}
+narG$copiespergram <- (narG$SQ*1000)/0.25 #100?L of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1?L of that diluted DNA is used as template. So we're counting copies of DNA in 0.1?L of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100?L DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+narG$log10copiespergram <- log10((narG$SQ*1000)/0.25) #log base 10 transform data
+narG$logecopiespergram <- log((narG$SQ*1000)/0.25) #log base e transform data
+
+colnames(narG)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+narGsummary <- summarySE(narG, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+narG2 <- narGsummary
+narG2$treatment <- factor(narG2$treatment, levels=c("C","25","75","150"))
+narG2$time <- factor(narG2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(narG2, aes(x=time, y=copiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "copies per gram soil",
+    colour = "treatment"
+  )
+
+       
+```
+
+## log(*narG*) Results
+
+```{r narG, echo=FALSE, fig.cap="Results of qPCR for narG gene. Error bars show 95% confidence intervals. Efficiency = 93.1%, $R^{2} = 0.99$\\label{narGgraph}"}
+narG$copiespergram <- (narG$SQ*1000)/0.25 #100?L of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1?L of that diluted DNA is used as template. So we're counting copies of DNA in 0.1?L of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100?L DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+narG$log10copiespergram <- log10((narG$SQ*1000)/0.25) #log base 10 transform data
+narG$logecopiespergram <- log((narG$SQ*1000)/0.25) #log base e transform data
+
+colnames(narG)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+narGsummary <- summarySE(narG, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+narG2 <- narGsummary
+narG2$treatment <- factor(narG2$treatment, levels=c("C","25","75","150"))
+narG2$time <- factor(narG2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(narG2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "log(copies per gram soil)",
+    colour = "treatment"
+  )
+
+       
+```
+
+## *nirK* results
+
+```{r nirK, echo=FALSE, fig.cap="Results of qPCR for *nirK* gene. Error bars show 95% confidence intervals. Efficiency = 84.3%, $R^{2} = 0.99$. These results were from undiluted DNA samples, so I will have to reanalyse the samples using diluted DNA.\\label{nirKgraph}"}
+nirK$copiespergram <- (nirK$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nirK$log10copiespergram <- log10((nirK$SQ*1000)/0.25) #log base 10 transform data
+nirK$logecopiespergram <- log((nirK$SQ*1000)/0.25) #log base e transform data
+
+colnames(nirK)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nirK_summary <- summarySE(nirK, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nirK2 <- nirK_summary
+nirK2$treatment <- factor(nirK2$treatment, levels=c("C","25","75","150"))
+nirK2$time <- factor(nirK2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nirK2, aes(x=time, y=copiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "copies per gram soil",
+    colour = "treatment"
+  )
+
+
+```
+
+
+## log(*nirK*) results
+
+```{r nirK, echo=FALSE, fig.cap="Results of qPCR for *nirK* gene. Error bars show 95% confidence intervals. Efficiency = 84.3%, $R^{2} = 0.99$. These results were from undiluted DNA samples, so I will have to reanalyse the samples using diluted DNA.\\label{nirKgraph}"}
+nirK$copiespergram <- (nirK$SQ*1000)/0.25 #100µL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1µL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1µL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100µL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nirK$log10copiespergram <- log10((nirK$SQ*1000)/0.25) #log base 10 transform data
+nirK$logecopiespergram <- log((nirK$SQ*1000)/0.25) #log base e transform data
+
+colnames(nirK)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nirK_summary <- summarySE(nirK, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nirK2 <- nirK_summary
+nirK2$treatment <- factor(nirK2$treatment, levels=c("C","25","75","150"))
+nirK2$time <- factor(nirK2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nirK2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "log(copies per gram soil)",
+    colour = "treatment"
+  )
+
+
+```
+
+## *nirS* results
+
+```{r nirS, echo=FALSE, fig.cap="Results of qPCR for nirS gene. Error bars show 95% confidence intervals. Efficiency = 77.0%, $R^{2} = 0.97$. \\label{nirSgraph}"}
+nirS$copiespergram <- (nirS$SQ*1000)/0.25 #100?L of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1?L of that diluted DNA is used as template. So we're counting copies of DNA in 0.1?L of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100?L DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nirS$log10copiespergram <- log10((nirS$SQ*1000)/0.25) #log base 10 transform data
+nirS$logecopiespergram <- log((nirS$SQ*1000)/0.25) #log base e transform data
+
+colnames(nirS)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nirSsummary <- summarySE(nirS, measurevar="copiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nirS2 <- nirSsummary
+nirS2$treatment <- factor(nirS2$treatment, levels=c("C","25","75","150"))
+nirS2$time <- factor(nirS2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nirS2, aes(x=time, y=copiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=copiespergram-se, ymax=copiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "copies per gram soil",
+    colour = "treatment"
+  )
+
+       
+```
+
+
+## log(*nirS*) results
+
+```{r nirS, echo=FALSE, fig.cap="Results of qPCR for nirS gene. Error bars show 95% confidence intervals. Efficiency = 77.0%, $R^{2} = 0.97$. \\label{nirSgraph}"}
+nirS$copiespergram <- (nirS$SQ*1000)/0.25 #100?L of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1?L of that diluted DNA is used as template. So we're counting copies of DNA in 0.1?L of template. So, we are using 0.001 (1/1000th) of the original DNA. So, times by 1000 to get the amount in 100?L DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
+nirS$log10copiespergram <- log10((nirS$SQ*1000)/0.25) #log base 10 transform data
+nirS$logecopiespergram <- log((nirS$SQ*1000)/0.25) #log base e transform data
+
+colnames(nirS)[3] <- "time" # renamed day column to time
+
+
+
+### works!!
+
+#summarySE function for errorbars from http://www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)/#Helper%20functions
+summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
+                      conf.interval=.95, .drop=TRUE) {
+  library(plyr)
+  
+  # New version of length which can handle NA's: if na.rm==T, don't count them
+  length2 <- function (x, na.rm=FALSE) {
+    if (na.rm) sum(!is.na(x))
+    else       length(x)
+  }
+  
+  # This does the summary. For each group's data frame, return a vector with
+  # N, mean, and sd
+  datac <- ddply(data, groupvars, .drop=.drop,
+                 .fun = function(xx, col) {
+                   c(N    = length2(xx[[col]], na.rm=na.rm),
+                     mean = mean   (xx[[col]], na.rm=na.rm),
+                     sd   = sd     (xx[[col]], na.rm=na.rm)
+                   )
+                 },
+                 measurevar
+  )
+  
+  # Rename the "mean" column    
+  datac <- rename(datac, c("mean" = measurevar))
+  
+  datac$se <- datac$sd / sqrt(datac$N)  # Calculate standard error of the mean
+  
+  # Confidence interval multiplier for standard error
+  # Calculate t-statistic for confidence interval: 
+  # e.g., if conf.interval is .95, use .975 (above/below), and use df=N-1
+  ciMult <- qt(conf.interval/2 + .5, datac$N-1)
+  datac$ci <- datac$se * ciMult
+  
+  return(datac)
+}
+
+nirSsummary <- summarySE(nirS, measurevar="logecopiespergram", groupvars=c("time","treatment")) #not sure if this is correct!
+
+nirS2 <- nirSsummary
+nirS2$treatment <- factor(nirS2$treatment, levels=c("C","25","75","150"))
+nirS2$time <- factor(nirS2$time)
+
+# Use 95% confidence intervals instead of SEM
+ggplot(nirS2, aes(x=time, y=logecopiespergram, fill=treatment)) + 
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=logecopiespergram-se, ymax=logecopiespergram+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9))+
+  labs(
+    x = "time (days)",
+    y = "log(copies per gram soil)",
+    colour = "treatment"
+  )
+
+       
+```
+
+## *nirB*
+
+Given the difficulties I have had getting qPCR to work with existing primers, I now realise I will not have time to design, test and optimise PCR for my own primers. So, I will not be studying nirB.
+
+## Field sites
+
+I have identified potential field sites in Queensland, Victoria and Tasmania:
+
+The "[TERN](https://supersites.tern.org.au/)" (Terrestrial Ecosystem
+Research Sites) look ideal, because there is long term data for soil
+moisture, climate, and lots of other research there:
+
+https://supersites.tern.org.au/
+
+### Queenland
+The sites in Far North Queensland [Daintree](https://supersites.tern.org.au/supersites/fnqr/daintree) and/or [Robson Creek](https://supersites.tern.org.au/supersites/fnqr/robson) look good. There's
+no agriculture anywhere near the Daintree site, but it looks like there is
+grass about 5 km away from the Robson Creek site just judging from what
+I can see on Google Earth, at [17.121 S, 145.634 E](https://www.google.com.au/maps/place/17%C2%B007%2715.6%22S+145%C2%B038%2702.4%22E/@-17.121,145.6318113,693m/data=%213m2%211e3%214b1%214m5%213m4%211s0x0:0x0%218m2%213d-17.121%214d145.634).
+
+### Tasmania
+I could contrast these with the site in Tasmanian site (called ["Warra Tall Eucalypt"](https://supersites.tern.org.au/supersites/wrra>).  [-43.09502 S, 146.65452 E](https://www.google.com.au/maps/place/17%C2%B007%2715.6%22S+145%C2%B038%2702.4%22E/@-17.121,145.6318113,693m/data=%213m2%211e3%214b1%214m5%213m4%211s0x0:0x0%218m2%213d-17.121%214d145.634),
+It is mostly forest all around there, but it looks like there is some grass about 20 km
+away.
+
+### Victoria
+Some other sites that have long term soil moisture monitoring are here
+http://cosmoz.csiro.au/
+e.g. [DEPI Hamilton research farm](http://cosmoz.csiro.au/sensor-information/?SiteNo=15) [-37.829 S, 142.089 E](https://www.google.com.au/maps/place/37%C2%B049%2744.4%22S+142%C2%B005%2720.4%22E/@-37.829,142.0868113,573m/data=%213m2%211e3%214b1%214m5%213m4%211s0x0:0x0%218m2%213d-37.829%214d142.089)
+could be good but there's not much forest around there, although I can see a 100m
+x 100m patch of trees on the site (using Google Earth).
+
+Another option is the Scotts Creek area in south west Victoria, where
+Andrew Smith spoke about in the soils group meeting.. although I don't
+think there's any long term soil moisture monitoring or research site there
+and the rainfall is not particularly high (900mm/year).
+
+## Preliminary study on Victorian soils
+Before going interstate, we have decided to collect soils in Victoria (3-5 wetland, forest and agricultural soils) and screen these soils for different genes without doing any incubation. Basic soil properties and nitrification and denitrification potential will also be measured. After completing these steps, DNRA rates will be measured.
+
+I have not yet decided where to collect soils for this study, as I have been preoccupied with getting qPCR to work in the lab.
