@@ -9,37 +9,44 @@ bibliography: PhD.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(citr)
-library(printr)
+library(readr)
+library(officer)
+library(flextable)
+# chapters <- read_csv("chapters.csv", col_types = cols(.default = "c"))
+# chapters <- read_csv("chapters.csv", col_types = cols(`No. of papers expected from chapter` = col_character(), 
+#     `Progress on lab/field task (%)` = col_character(), 
+#     `Progress on writing task (%)` = col_character()))
+# chapters <- read_csv("chapters.csv")
+chapters <- read_csv("chapters.csv", col_types = cols(chap.no = col_integer(), 
+     progress.lab = col_integer(), 
+     progress.writing = col_integer()))
 ```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 This is a test [@ghaniHotwaterExtractableCarbon2003].
 
 ## test table
 
-V1         Tweedledee       Tweedledum
---------   --------------   ----------------
-Age        14               14
-Height     3'2"             3'2"
-Politics   Conservative     Conservative
-Religion   "New Age"        Syrian Orthodox
----------  --------------   ----------------
+```{r chapter_table,echo=FALSE}
 
-```{r cars}
-summary(cars)
+chapter_table <- flextable(chapters)
+chapter_table <- theme_booktabs(chapter_table)
+chapter_table <- merge_h_range(chapter_table, i = ~is.na(chap.no), j1 = "chap.description", j2 = "finish.date")
+chapter_table <- bold(chapter_table, i = ~!is.na(chap.no))
+chapter_table <- align( chapter_table, align = "center", part="header" )
+chapter_table <- font(chapter_table, part="all", fontname = "Times")
+chapter_table <- fontsize(chapter_table, part="all", size = 10)
+chapter_table <- set_header_labels(chapter_table, chap.no="Chap. No.",
+                                   chap.description="Chapter description",
+                                   progress.lab="Progress on lab/field task (%)",
+                                   progress.writing="Progress on writing task (%)",
+                                   finish.date="Expected finish date")
+chapter_table <- height_all(chapter_table, height = .3)
+chapter_table <- width(chapter_table, j="chap.description", width = 3.5)
+chapter_table <- width(chapter_table, j="chap.no", width = .6)
+int_keys <- c("chap.no", "progress.lab", "progress.writing")
+chapter_table <- colformat_int(x = chapter_table, col_keys = int_keys)
+chapter_table <- set_caption(chapter_table, "Thesis and Research Plan.")
+chapter_table
+
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
