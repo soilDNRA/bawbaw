@@ -3,10 +3,10 @@ title: 'September 2018 review: Data collected from Mt. Baw Baw'
 author: "Eric Ireland"
 date: "4 September 2018"
 output:
-  html_document: default
+  word_document: default
   pdf_document: 
     latex_engine: xelatex
-  word_document: default
+  html_document: default
 always_allow_html: yes
 ---
 
