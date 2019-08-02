@@ -143,6 +143,7 @@ bawbaw_TOC_means <- bind_rows(bawbaw_TOC_50to59, bawbaw_TOC_60to97) %>%
 #bawbaw_TOC_means <- parse_factor()
 
 #levation_levels <- c("200","300","500","600","800","900","1000","1100","1200","1300","1400","1500") # define factor levels for elevation, to be used with parse_factor
+bawbaw_TOC_means$mean_ug_TOC_per_g_soil <- round(bawbaw_TOC_means$mean_ug_TOC_per_g_soil, 1) # round to 1 decimal
 
 bawbaw_TOC_means <- bawbaw_TOC_means %>%
   mutate(elevation = factor(elevation, levels = c("200", "300", "500", "600", "800", "900", "1000", "1100","1200", "1300", "1400","1500"))) %>%
@@ -152,7 +153,7 @@ bawbaw_TOC_means <- bawbaw_TOC_means %>%
 #parse_factor(bawbaw_TOC_means$elevation, elevation_levels)
 
 names(bawbaw_TOC_means) <- c("Elevation", "mean TOC (µg/g soil)")
-kable(bawbaw_TOC_means) # %>%
+flextable(bawbaw_TOC_means) # %>%
 #   kable_styling(bootstrap_options = "striped", full_width = F)
 
 # # see http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
@@ -233,7 +234,8 @@ bawbaw_mineral_N_means <- bawbaw_mineral_N %>%
 
 # calculate C/NO3- ratio and C/mineral-N ratio
 combined_NC_means <- bind_cols(bawbaw_mineral_N_means, bawbaw_TOC_means)
-combined_NC_means <- combined_NC_means %>% select(-elevation1) %>% #remove extra elevation column
+combined_NC_means <- combined_NC_means %>% 
+  select(-elevation1) %>% #remove extra elevation column
   mutate(C_nitrate_ratio = mean_ug_TOC_per_g_soil / total_NO3_per_g_soil_ug,
                                                   C_mineral_N_ratio = mean_ug_TOC_per_g_soil / (total_NO3_per_g_soil_ug + total_NH4_per_g_soil_ug))
 
