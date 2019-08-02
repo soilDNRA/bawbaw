@@ -97,7 +97,9 @@ Soils were collected from 4 subplots at 12 sites at different elevations in Apri
 * qPCR was performed to determine gene abundance of N cycling genes.
 * Soil from sites with the contrasting C / NO~3~ ratios were  collected for a ^15^N tracing experiment, comparing N cycling rates at 60% and 95% water holding capacity (WHC).
 
-### Baw Baw fresh soil hot water extractable carbon (HWC) and mineral N, April 2018
+### Baw Baw labile C and mineral N, April 2018
+
+Labile C was measured as hot water-extractable carbon (HWC) using the method described by @ghaniHotwaterExtractableCarbon2003.
 
 ``` {r TOC, echo=FALSE, message = FALSE}
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
@@ -213,6 +215,8 @@ NC_flextable <- footnote( NC_flextable, i = ~ total_NO3_per_g_soil_ug <2.1, j = 
 # NC_flextable <- valign(NC_flextable, valign = "bottom", part = "header")
 NC_flextable <- autofit(NC_flextable)
 
+NC_flextable <- set_caption(NC_flextable, "Table 1. Labile C as hot water extractable carbon (HWC) and mineral N (NH~4~^+^,NO~3~^-^) per gram soil.")
+
 NC_flextable
 
 #  kable_styling(bootstrap_options = "striped", full_width = F)
@@ -222,7 +226,7 @@ NC_flextable
 #### Bacterial 16S rRNA abundance
 
 
-```{r rRNA16S, echo=FALSE, , message = FALSE, fig.cap="Results of qPCR for *rRNA16S* gene. Error bars show SEM. Efficiency = 100.2%, $R^{2} = 0.99$. \\label{rRNA16Sgraph}"}
+```{r rRNA16S, echo=FALSE, , message = FALSE, fig.cap="*rRNA16S* gene abundance in fresh Baw Baw soil, collected April 2018. Error bars show S.E.M. Efficiency = 100.2%, $R^{2} = 0.99$. \\label{rRNA16Sgraph}"}
 rRNA16S$copiespergram <- (rRNA16S$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 rRNA16S$log10copiespergram <- log10((rRNA16S$SQ*1000)/0.25) #log base 10 transform data
 rRNA16S$logecopiespergram <- log((rRNA16S$SQ*1000)/0.25) #log base e transform data
@@ -298,8 +302,8 @@ rRNAp <- unname(anovatablerRNA$`Pr(>F)`[1])
 <!-- could use `r round(rRNAp,3)` to report p value. -->
 16S rRNA gene abundance did differ significantly between elevations (*F*-test, $p=`r ifelse(round(rRNAp, 3) == 0, "<.001", round(rRNAp, 3))`$).
 
-
-```{r nosZ, echo=FALSE, fig.cap="Results of qPCR for *nosZ* gene. Error bars show SEM. Efficiency = 78.4%, $R^{2} = 0.99$. \\label{nosZgraph}"}
+#### *nosZ* gene abundance
+```{r nosZ, echo=FALSE, fig.cap="Results of qPCR for *nosZ* gene. Error bars show S.E.M. Efficiency = 78.4%, $R^{2} = 0.99$. \\label{nosZgraph}"}
 nosZ$copiespergram <- (nosZ$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 nosZ$log10copiespergram <- log10((nosZ$SQ*1000)/0.25) #log base 10 transform data
 nosZ$logecopiespergram <- log((nosZ$SQ*1000)/0.25) #log base e transform data
@@ -362,7 +366,7 @@ ggplot(nosZ2, aes(x=sample_elevation, y=log10copiespergram)) +
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = "log(copies per gram soil)"
+    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
   )
 ```
 
@@ -378,7 +382,7 @@ nosZ_p <- unname(anovatablenosZ$`Pr(>F)`[1])
 *nosZ* gene abundance varied between elevations (*F*-test, $p=`r ifelse(nosZ_p < 0.01, "<0.01", ifelse(nosZ_p < 0.05, "<0.05",round(nosZ_p, 3)))`$).
 
 
-```{r narG, echo=FALSE, fig.cap="Results of qPCR for *narG* gene. Error bars show SEM. Efficiency = 85.3%, $R^{2} = 0.99$. \\label{narGgraph}"}
+```{r narG, echo=FALSE, fig.cap="Results of qPCR for *narG* gene. Error bars show S.E.M. Efficiency = 85.3%, $R^{2} = 0.99$. \\label{narGgraph}"}
 narG$copiespergram <- (narG$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 narG$log10copiespergram <- log10((narG$SQ*1000)/0.25) #log base 10 transform data
 narG$logecopiespergram <- log((narG$SQ*1000)/0.25) #log base e transform data
@@ -457,7 +461,7 @@ narG_p <- unname(anovatablenarG$`Pr(>F)`[1])
 *narG* gene abundance did not vary significantly between elevations (*F*-test, $p=`r ifelse(narG_p < 0.01, "<0.01", ifelse(narG_p < 0.05, "<0.05",round(narG_p, 3)))`$).
 
 
-```{r nirK, echo=FALSE, fig.cap="Results of qPCR for *nirK* gene. Error bars show SEM. Efficiency = 70.0%, $R^{2} = 0.99$. \\label{nirKgraph}"}
+```{r nirK, echo=FALSE, fig.cap="Results of qPCR for *nirK* gene. Error bars show S.E.M. Efficiency = 70.0%, $R^{2} = 0.99$. \\label{nirKgraph}"}
 nirK$copiespergram <- (nirK$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 nirK$log10copiespergram <- log10((nirK$SQ*1000)/0.25) #log base 10 transform data
 nirK$logecopiespergram <- log((nirK$SQ*1000)/0.25) #log base e transform data
@@ -536,7 +540,7 @@ nirK_p <- unname(anovatablenirK$`Pr(>F)`[1])
 *nirK* gene abundance did not vary significantly between elevations (*F*-test, $p=`r ifelse(nirK_p < 0.01, "<0.01", ifelse(nirK_p < 0.05, "<0.05",round(nirK_p, 3)))`$).
 
 
-```{r nrfA, echo=FALSE, fig.cap="Results of qPCR for *nrfA* gene. Error bars show SEM. Efficiency = 63.4%, $R^{2} = 0.99$. \\label{nrfAgraph}"}
+```{r nrfA, echo=FALSE, fig.cap="Results of qPCR for *nrfA* gene. Error bars show S.E.M. Efficiency = 63.4%, $R^{2} = 0.99$. \\label{nrfAgraph}"}
 nrfA$copiespergram <- (nrfA$SQ*1000)/0.25 #100ÂµL of solution is recovered from 0.25g soil. This template DNA is diluted 1:10 and then 1ÂµL of that diluted DNA is used as template. So we're counting copies of DNA in 0.1ÂµL of template. So, we are using 0.001 (1/100th) of the original DNA. So, times by 100 to get the amount in 100ÂµL DNA, then times by 4 (i.e. divide by 0.25) to get the copies in 1g of soil.
 nrfA$log10copiespergram <- log10((nrfA$SQ*1000)/0.25) #log base 10 transform data
 nrfA$logecopiespergram <- log((nrfA$SQ*1000)/0.25) #log base e transform data
