@@ -247,15 +247,41 @@ write_tsv(combined_NC_means,"combined_NC_means.tsv")
 
 
 #print see https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-combined_NC_means2 <- combined_NC_means
-combined_NC_means2$C_nitrate_ratio <- round(combined_NC_means2$C_nitrate_ratio, 1)
-combined_NC_means2$C_mineral_N_ratio <- round(combined_NC_means2$C_mineral_N_ratio, 1)
-combined_NC_means2 <- combined_NC_means2 %>%
+
+combined_NC_means$C_nitrate_ratio <- round(combined_NC_means$C_nitrate_ratio, 1)
+combined_NC_means$C_mineral_N_ratio <- round(combined_NC_means$C_mineral_N_ratio, 1)
+combined_NC_means$mean_ug_TOC_per_g_soil <- round(combined_NC_means$mean_ug_TOC_per_g_soil, 1)
+combined_NC_means <- combined_NC_means %>%
   mutate(elevation = factor(elevation, levels = c("200", "300", "500", "600", "800", "900", "1000", "1100","1200", "1300", "1400","1500"))) %>% 
   arrange(elevation) %>% 
-  select(elevation, C_nitrate_ratio, C_mineral_N_ratio) 
-names(combined_NC_means2) <- c("Elevation", "HWC/nitrate-N", "HWC/mineral-N")
-kable(combined_NC_means2) #%>%
+  select(elevation, mean_ug_TOC_per_g_soil, total_NO3_per_g_soil_ug, total_NH4_per_g_soil_ug, C_nitrate_ratio) 
+# names(combined_NC_means) <- c("Elevation", "mean HWC (µg/g soil)", "HWC/nitrate-N", "HWC/mineral-N")
+
+NC_flextable <- flextable(combined_NC_means)
+# NC_flextable <- set_header_labels(NC_flextable, elevation = "Elevation (m)", 
+#     mean_ug_TOC_per_g_soil = "Mean HWC (µg/g soil)", Petal.Length = "Petal",
+#     Petal.Width = "Petal" )
+
+flextable_key <- c("mean_ug_TOC_per_g_soil", "total_NO3_per_g_soil_ug", "total_NH4_per_g_soil_ug","C_nitrate_ratio")
+NC_flextable <- colformat_num(x = NC_flextable, col_keys = flextable_key, big.mark = "", digits=1)
+NC_flextable <- compose(NC_flextable, part = "header", j = "elevation", 
+    value = as_paragraph(as_b("Elevation (m)")))
+NC_flextable <- compose(NC_flextable, part = "header", j = "mean_ug_TOC_per_g_soil", 
+    value = as_paragraph(as_b("HWC (µg.g"), as_sup("-1"),as_b(".soil)")))
+NC_flextable <- compose(NC_flextable, part = "header", j = "C_nitrate_ratio", 
+    value = as_paragraph(as_b("HWC/"),as_b("NO"), as_sub("3"), as_sup("-")))
+NC_flextable <- compose(NC_flextable, part = "header", j = "total_NH4_per_g_soil_ug", 
+    value = as_paragraph(as_b("NH"), as_sub("4"), as_sup("+"),as_b("(µg.g"), as_sup("-1"), as_b(".soil)")))
+NC_flextable <- compose(NC_flextable, part = "header", j = "total_NO3_per_g_soil_ug", 
+    value = as_paragraph(as_b("NO"), as_sub("3"), as_sup("-"),as_b("(µg.g"), as_sup("-1"), as_b(".soil)")))
+NC_flextable <- compose(NC_flextable, i = ~ total_NO3_per_g_soil_ug <2.1, j = "total_NO3_per_g_soil_ug", 
+  value = as_paragraph("<",
+                       as_chunk(sprintf("%.01f",total_NO3_per_g_soil_ug)),
+                       as_chunk("*", props = fp_text(color = "red"))))
+NC_flextable <- autofit(NC_flextable)
+
+NC_flextable
+
 #  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
