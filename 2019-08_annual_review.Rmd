@@ -23,6 +23,8 @@ library(readxl)
 library(citr)
 library(officer)
 library(flextable)
+library(pagedown)
+library(RColorBrewer)
 # chapters <- read_csv("chapters.csv", col_types = cols(.default = "c"))
 # chapters <- read_csv("chapters.csv", col_types = cols(`No. of papers expected from chapter` = col_character(), 
 #     `Progress on lab/field task (%)` = col_character(), 
@@ -212,7 +214,7 @@ NC_flextable <- compose(NC_flextable, i = ~ total_NO3_per_g_soil_ug <2.1, j = "t
 NC_flextable <- footnote( NC_flextable, i = ~ total_NO3_per_g_soil_ug <2.1, j = "total_NO3_per_g_soil_ug",
             value = as_paragraph("Below detection limit."),
             ref_symbols = "a")
-# NC_flextable <- valign(NC_flextable, valign = "bottom", part = "header")
+NC_flextable <- align(NC_flextable, align = "right", part = "body")
 NC_flextable <- autofit(NC_flextable)
 
 NC_flextable <- set_caption(NC_flextable, "Table 1. Labile C as hot water extractable carbon (HWC) and mineral N (NH~4~^+^,NO~3~^-^) per gram soil.")
@@ -282,15 +284,17 @@ rRNA16S2$sample_elevation <- factor(rRNA16S2$sample_elevation, levels=c("200","3
 
 
 # Error bars represent standard error of the mean
-ggplot(rRNA16S2, aes(x=sample_elevation, y=log10copiespergram)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
+rRNA_bars <- ggplot(rRNA16S2, aes(x=sample_elevation, y=log10copiespergram)) + 
+    geom_bar(position=position_dodge(), stat="identity",fill="steelblue") +
     geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
+    y = expression("log"[10]~"(16S rRNA gene copies.g"^-1~" soil)")
   )
+
+rRNA_bars + theme_classic()
 ```
 
 ```{r echo=FALSE}
@@ -300,7 +304,7 @@ rRNAp <- unname(anovatablerRNA$`Pr(>F)`[1])
 ```
 
 <!-- could use `r round(rRNAp,3)` to report p value. -->
-16S rRNA gene abundance did differ significantly between elevations (*F*-test, $p=`r ifelse(round(rRNAp, 3) == 0, "<.001", round(rRNAp, 3))`$).
+16S rRNA gene abundance did differ significantly between elevations (*F*-test, $p`r ifelse(round(rRNAp, 3) == 0, "<.001", round(rRNAp, 3))`$).
 
 #### *nosZ* gene abundance
 ```{r nosZ, echo=FALSE, fig.cap="Results of qPCR for *nosZ* gene. Error bars show S.E.M. Efficiency = 78.4%, $R^{2} = 0.99$. \\label{nosZgraph}"}
@@ -360,14 +364,15 @@ nosZ2$sample_elevation <- factor(nosZ2$sample_elevation, levels=c("200","300","5
 
 # Error bars represent standard error of the mean
 ggplot(nosZ2, aes(x=sample_elevation, y=log10copiespergram)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
+    geom_bar(position=position_dodge(), stat="identity", fill="steelblue") +
     geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
-  )
+    y = expression("log"[10]~"("~italic("nosZ")~"gene copies.g"^-1~" soil)")
+  )+
+  theme_classic()
 ```
 
 
@@ -379,7 +384,7 @@ nosZ_p <- unname(anovatablenosZ$`Pr(>F)`[1])
 
 
 <!-- could use `r round(rRNAp,3)` to report p value. -->
-*nosZ* gene abundance varied between elevations (*F*-test, $p=`r ifelse(nosZ_p < 0.01, "<0.01", ifelse(nosZ_p < 0.05, "<0.05",round(nosZ_p, 3)))`$).
+*nosZ* gene abundance varied between elevations (*F*-test, $p`r ifelse(nosZ_p < 0.01, "<0.01", ifelse(nosZ_p < 0.05, "<0.05",round(nosZ_p, 3)))`$).
 
 
 ```{r narG, echo=FALSE, fig.cap="Results of qPCR for *narG* gene. Error bars show S.E.M. Efficiency = 85.3%, $R^{2} = 0.99$. \\label{narGgraph}"}
@@ -439,14 +444,15 @@ narG2$sample_elevation <- factor(narG2$sample_elevation, levels=c("200","300","5
 
 # Error bars represent standard error of the mean
 ggplot(narG2, aes(x=sample_elevation, y=log10copiespergram)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
+    geom_bar(position=position_dodge(), stat="identity",fill="steelblue") +
     geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
-  )
+    y = expression("log"[10]~"("~italic("narG")~"gene copies.g"^-1~" soil)")
+  )+
+  theme_classic()
 ```
 
 
@@ -518,14 +524,15 @@ nirK2$sample_elevation <- factor(nirK2$sample_elevation, levels=c("200","300","5
 
 # Error bars represent standard error of the mean
 ggplot(nirK2, aes(x=sample_elevation, y=log10copiespergram)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
+    geom_bar(position=position_dodge(), stat="identity",fill="steelblue") +
     geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
-  )
+    y = expression("log"[10]~"("~italic("nirK")~"gene copies.g"^-1~" soil)")
+  )+
+  theme_classic()
 ```
 
 
@@ -597,14 +604,15 @@ nrfA2$sample_elevation <- factor(nrfA2$sample_elevation, levels=c("200","300","5
 
 # Error bars represent standard error of the mean
 ggplot(nrfA2, aes(x=sample_elevation, y=log10copiespergram)) + 
-    geom_bar(position=position_dodge(), stat="identity") +
+    geom_bar(position=position_dodge(), stat="identity",fill="steelblue") + 
     geom_errorbar(aes(ymin=log10copiespergram-se, ymax=log10copiespergram+se),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))+
   labs(
     x = "sample elevation (m)",
-    y = expression(paste("log"[10], "(copies.g"^-1, "soil)"))
-  )
+    y = expression("log"[10]~"("~italic("nrfA")~"gene copies.g"^-1~" soil)")
+  )+
+  theme_classic()
 ```
 
 
@@ -616,7 +624,7 @@ nrfA_p <- unname(anovatablenrfA$`Pr(>F)`[1])
 
 
 <!-- could use `r round(rRNAp,3)` to report p value. -->
-*nrfA* gene abundance varied significantly between elevations (*F*-test, $p=`r ifelse(nrfA_p < 0.01, "<0.01", ifelse(nrfA_p < 0.05, "<0.05",round(nrfA_p, 3)))`$).
+*nrfA* gene abundance varied significantly between elevations (*F*-test, $p`r ifelse(nrfA_p < 0.01, "<0.01", ifelse(nrfA_p < 0.05, "<0.05",round(nrfA_p, 3)))`$).
 
 
 
