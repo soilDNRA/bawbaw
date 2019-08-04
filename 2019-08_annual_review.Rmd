@@ -97,11 +97,19 @@ Soils were collected from 4 subplots at 12 sites at different elevations in Apri
 * 16S rRNA amplicons sequencing (metabarcoding) via Illumina MiSeq (at AGRF) to reveal differences in microbial communities at different elevations.
 * Sequence data has been processed by Dr. Qinglin Chen to analyse OTUs and calculate alpha and beta diversity using QIIME 2 [@bolyenReproducibleInteractiveScalable2019].
 * qPCR was performed to determine gene abundance of N cycling genes.
-* Soil from sites with the contrasting C / NO~3~ ratios were  collected for a ^15^N tracing experiment, comparing N cycling rates at 60% and 95% water holding capacity (WHC).
+* Soil from sites with the contrasting C / NO~3~ ratios were  collected for a ^15^N tracing laboratory incubation experiment, comparing N cycling rates at 60% and 95% water holding capacity (WHC). Data from this experiment will be used for Chapter 5.
+
+
+
+### Work still to be completed:
+
+* Basic soil properties (pH, total C, total N).
+* Combined microbiome data with soil properties, mycorrhizal fungal data and vegetation and climate data in collaboration with Sabine Kasel and Craig Nitschke from Burnley.
 
 ### Baw Baw labile C and mineral N, April 2018
 
 Labile C was measured as hot water-extractable carbon (HWC) using the method described by @ghaniHotwaterExtractableCarbon2003.
+
 
 ``` {r TOC, echo=FALSE, message = FALSE}
 bawbaw_TOC_50to59 <- read_table2(col_names = FALSE, "TOC_results/2018-07-02_Baw_Baw_50to59_diluted_1to20.txt", skip = 13)
@@ -225,7 +233,7 @@ NC_flextable
 ```
 
 
-#### Bacterial 16S rRNA abundance
+#### Baw Baw gene abundance, April 2018
 
 
 ```{r rRNA16S, echo=FALSE, , message = FALSE, fig.cap="*rRNA16S* gene abundance in fresh Baw Baw soil, collected April 2018. Error bars show S.E.M. Efficiency = 100.2%, $R^{2} = 0.99$. \\label{rRNA16Sgraph}"}
@@ -626,12 +634,6 @@ nrfA_p <- unname(anovatablenrfA$`Pr(>F)`[1])
 <!-- could use `r round(rRNAp,3)` to report p value. -->
 *nrfA* gene abundance varied significantly between elevations (*F*-test, $p`r ifelse(nrfA_p < 0.01, "<0.01", ifelse(nrfA_p < 0.05, "<0.05",round(nrfA_p, 3)))`$).
 
-
-
-### Work still to be completed:
-
-* Basic soil properties (pH, total C, total N).
-* Combined microbiome data with soil properties, mycorrhizal fungal data and vegetation and climate data in collaboration with Sabine Kasel and Craig Nitschke from Burnley.
 
 
 
