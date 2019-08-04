@@ -18,7 +18,7 @@ library(car)
 library(tidyverse)
 library(readxl)
 library(knitr)
-
+library(png)
 library(readxl)
 library(citr)
 library(officer)
@@ -90,7 +90,7 @@ N was added in the form of NH~4~NO~3~ at a rate of 25 μg.g^−1^, 75 μg.g^−1
 
 Sabine Kasel and Craig Nitschke at Burnley had weather stations positioned along an elevational gradient at Mount Baw Baw. They have  collected soil properties and performed flora surveys, and investigated the mycorrhizal communities across the gradient using next generation sequencing. They also have 16S rRNA sequence data, which has not yet been analysed.
 
-Soils were collected from 4 subplots at 12 sites at different elevations in April 2019. The following data were collected:
+Soils were collected from 4 subplots at 12 sites at different elevations in April 2018, as shown in Figures \@ref(fig:dry) - \@ref(fig:alpine)). The following data were collected:
 
 * Mineral N (NH~4~^+^,NO~3~^-^) in fresh soil
 * Labile C was analysed and the labile C / NO~3~^-^ ratio calculated.
@@ -99,6 +99,20 @@ Soils were collected from 4 subplots at 12 sites at different elevations in Apri
 * qPCR was performed to determine gene abundance of N cycling genes.
 * Soil from sites with the contrasting C / NO~3~ ratios were  collected for a ^15^N tracing laboratory incubation experiment, comparing N cycling rates at 60% and 95% water holding capacity (WHC). Data from this experiment will be used for Chapter 5.
 
+
+```{r dry, echo=FALSE, fig.show = 'hold', out.width = "33%", fig.cap="\\label{fig:dry}Dry sclerophyll forest (low elevation)."}
+knitr::include_graphics("img/dry_sclerophyll.png")
+```
+
+
+```{r wet, echo=FALSE, fig.cap="\\label{fig:wet}Wet sclerophyll forest (mid elevation)."}
+knitr::include_graphics("img/wet_sclerophyll.png")
+```
+
+
+```{r alpine, echo=FALSE, fig.cap="\\label{fig:alpine}Alpine vegetation (high elevation)."}
+knitr::include_graphics("img/alpine.png")
+```
 
 
 ### Work still to be completed:
