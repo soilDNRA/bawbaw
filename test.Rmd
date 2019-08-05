@@ -1,0 +1,21 @@
+---
+title: "SO"
+output: 
+  word_document: 
+    fig_caption: yes
+---
+
+
+```{r fig.cap = paste("Graph of", nrow(iris), "data points.")}
+plot(iris)
+```
+
+
+```{r setup}
+library(knitr)
+```
+
+```{r fig.cap = paste("Graph of", nrow(data2), "data points.")}
+data2 <- data.frame(1:10)
+plot(data2)
+```
