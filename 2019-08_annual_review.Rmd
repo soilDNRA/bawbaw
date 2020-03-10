@@ -38,7 +38,7 @@ narG <- read_csv("narG.csv")
 nrfA <- read_csv("nrfA.csv")
 nosZ <- read_csv("nosZ.csv")
 rRNA16S <- read_csv("bact16S.csv")
-# rRNA16S <- read_csv("bact16S.csv", col_types = cols(sample_elevation = col_factor(levels = c("200","300", "500", "600", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500"))))
+#rRNA16S <- read_csv("bact16S.csv", col_types = cols(sample_elevation = col_factor(levels = c("200","300", "500", "600", "800", "900", "1000", "1100", "1200", "1300", "1400", "1500"))))
 ```
 
 

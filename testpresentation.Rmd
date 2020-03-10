@@ -3,7 +3,7 @@ title: "Untitled"
 author: "Eric Ireland"
 date: "07/08/2019"
 output: powerpoint_presentation
-reference_doc: template.pptx
+reference_doc: rstudio-template.pptx
 ---
 
 ```{r setup, include=FALSE}
